@@ -10,4 +10,21 @@
 
 @implementation User
 
+- (NSString *)profileName
+{
+    NSDictionary *profile = [self profile];
+    return profile[@"name"];
+}
+
+- (NSString *)profileURL
+{
+    NSDictionary *profile = [self profile];
+    return profile[@"pictureURL"];
+}
+
+- (NSDictionary *)profile
+{
+    return [self objectForKey:@"profile"];
+}
+
 @end

@@ -10,4 +10,7 @@
 
 @interface User : PFUser
 
+@property (nonatomic, readonly) NSString *profileName;
+@property (nonatomic, readonly) NSString *profileURL;
+
 @end

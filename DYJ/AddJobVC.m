@@ -16,6 +16,7 @@ NSString *const TaskTitleKey = @"TaskTitleKey";
 NSString *const TaskDescriptionKey = @"TaskDescriptionKey";
 NSString *const TaskDateKey = @"TaskDateKey";
 NSString *const TaskBidKey = @"TaskBidKey";
+NSString *const TaskFriendsKey = @"TaskFriendsKey";
 
 typedef NS_ENUM(NSUInteger, VCSection) {
     VCSectionTitles,
@@ -36,11 +37,18 @@ typedef NS_ENUM(NSUInteger, VCSectionDateRow) {
     VCSectionDateRowsCount
 };
 
-@interface AddJobVC () <UITableViewDataSource, UITableViewDelegate, InputCellDelegate>
+typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
+    VCSectionBidsRowBids,
+    VCSectionBidsRowsCount
+};
+
+@interface AddJobVC () <UITableViewDataSource, UITableViewDelegate, InputCellDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
 
 @property NSMutableDictionary *taskDictionary;
 @property UITableView *tableView;
 @property UIView *datePicker;
+@property UIView *motivesPicker;
+@property NSArray *values;
 @property (nonatomic) CGFloat keyboardPadding;
 @property (nonatomic) CGFloat datePickerPadding;
 @property (nonatomic) CGFloat motivesPickerPadding;
@@ -55,6 +63,8 @@ typedef NS_ENUM(NSUInteger, VCSectionDateRow) {
 
     self.title = @"PLAN A NEW JOB";
     self.taskDictionary = [NSMutableDictionary new];
+    self.taskDictionary[TaskFriendsKey] = @[];
+    self.values = @[@10, @25, @50, @100];
 
     // Close button.
     UIButton *closeButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -139,7 +149,8 @@ typedef NS_ENUM(NSUInteger, VCSectionDateRow) {
     NSString *title = self.taskDictionary[TaskTitleKey];
     NSString *taskDescription = self.taskDictionary[TaskDescriptionKey];
     NSDate *expired = self.taskDictionary[TaskDateKey];
-    return ([title length] && [taskDescription length] && expired);
+    NSNumber *bid = self.taskDictionary[TaskBidKey];
+    return ([title length] && [taskDescription length] && expired && bid);
 }
 
 - (void)updateAddButton
@@ -169,7 +180,7 @@ typedef NS_ENUM(NSUInteger, VCSectionDateRow) {
     newTask.taskDescription = self.taskDictionary[TaskDescriptionKey];
     newTask.creator = [PFUser currentUser];
     newTask.expiration = self.taskDictionary[TaskDateKey];
-    newTask.reward = @(10);
+    newTask.reward = self.taskDictionary[TaskBidKey];
     [newTask save];
     if (self.delegate) {
         [self.delegate addJobVCDidFinish:self];
@@ -229,13 +240,16 @@ typedef NS_ENUM(NSUInteger, VCSectionDateRow) {
 {
     switch (section) {
         case VCSectionTitles:
-            return 2;
+            return VCSectionTitlesRowsCount;
         case VCSectionDate:
-            return 1;
+            return VCSectionDateRowsCount;
         case VCSectionBids:
-            return 1;
+            return VCSectionBidsRowsCount;
         case VCSectionFriends:
-            return 2;
+        {
+            NSArray *friends = self.taskDictionary[TaskFriendsKey];
+            return [friends count] + 1;
+        }
         default:
             return 0;
     }
@@ -265,16 +279,10 @@ typedef NS_ENUM(NSUInteger, VCSectionDateRow) {
             resultCell = cell;
             break;
         }
-        default:
-        {
-            UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TestCell" forIndexPath:indexPath];
-            resultCell = cell;
-            break;
-        }
         case VCSectionDate:
         {
             switch (indexPath.row) {
-                case VCSectionTitlesRowName:
+                case VCSectionDateRowExpiration:
                 {
                     InfoCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([InfoCell class]) forIndexPath:indexPath];
                     cell.label.text = @"Day and time";
@@ -288,6 +296,48 @@ typedef NS_ENUM(NSUInteger, VCSectionDateRow) {
                     resultCell = cell;
                 }
             }
+            break;
+        }
+        case VCSectionBids:
+        {
+            switch (indexPath.row) {
+                case VCSectionBidsRowBids:
+                {
+                    InfoCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([InfoCell class]) forIndexPath:indexPath];
+                    cell.label.text = @"Your bid";
+                    NSNumber *bid = self.taskDictionary[TaskBidKey];
+                    cell.infoLabel.text = bid ? [NSString stringWithFormat:@"%@ motives", bid] : @"Select your bid";
+                    resultCell = cell;
+                }
+            }
+            break;
+        }
+        case VCSectionFriends:
+        {
+            InfoCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([InfoCell class]) forIndexPath:indexPath];
+
+            BOOL isFirstCell = (indexPath.row == 0);
+            BOOL isLastCell = (indexPath.row == [tableView numberOfRowsInSection:indexPath.section] - 1);
+            cell.separatorTop.hidden = !isFirstCell;
+            cell.separatorMiddle.hidden = isLastCell;
+            cell.separatorBottom.hidden = !isLastCell;
+
+            NSArray *friends = self.taskDictionary[TaskFriendsKey];
+            User *friend;
+            if (indexPath.row < [friends count]) {
+                friend = friends[indexPath.row];
+            }
+
+            if (friend) {
+                cell.label.text = friend.profileName;
+                cell.infoLabel.text = nil;
+            } else {
+                cell.label.text = @"Add";
+                cell.infoLabel.text = @"Friends list";
+            }
+
+            resultCell = cell;
+            break;
         }
     }
 
@@ -296,6 +346,10 @@ typedef NS_ENUM(NSUInteger, VCSectionDateRow) {
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    [self performAfterDelay:0.3 block:^() {
+        [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    }];
+
     switch (indexPath.section)
     {
         case VCSectionTitles:
@@ -334,6 +388,10 @@ typedef NS_ENUM(NSUInteger, VCSectionDateRow) {
             pickerView.backgroundColor = [UIColor whiteColor];
             self.datePicker = pickerView;
 
+            UIView *separatorTop = [[UIView alloc] initWithFrame:CGRectMake(0, 0, pickerView.width, PIXEL)];
+            [pickerView addSubview:separatorTop];
+            separatorTop.backgroundColor = [UIColor colorWithColorCode:@"cccccc"];
+
             UIButton *done = [UIButton buttonWithType:UIButtonTypeCustom];
             [done setTitle:@"Done" forState:UIControlStateNormal];
             [done setTitleColor:[UIColor colorWithColorCode:@"FF6C2F"] forState:UIControlStateNormal];
@@ -342,9 +400,13 @@ typedef NS_ENUM(NSUInteger, VCSectionDateRow) {
             [pickerView addSubview:done];
 
             NSDate *defaultDate = [NSDate dateWithTimeIntervalSinceNow:3 * 24 * 60 * 60];
-            self.taskDictionary[TaskDateKey] = defaultDate;
+            NSDate *selectedDate = self.taskDictionary[TaskDateKey];
+            if (!selectedDate) {
+                selectedDate = defaultDate;
+                self.taskDictionary[TaskDateKey] = defaultDate;
+            }
             [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:VCSectionDate] withRowAnimation:UITableViewRowAnimationAutomatic];
-            [datePicker setDate:defaultDate animated:YES];
+            [datePicker setDate:selectedDate animated:YES];
             [pickerView addSubview:datePicker];
             pickerView.originY = self.view.height;
             [self.view addSubview:pickerView];
@@ -352,6 +414,69 @@ typedef NS_ENUM(NSUInteger, VCSectionDateRow) {
                 pickerView.origin = CGPointMake(0, self.view.height - pickerView.height);
                 self.datePickerPadding = pickerView.height;
             }];
+            break;
+        }
+        case VCSectionBids:
+        {
+            if (self.motivesPicker) {
+                [self motivesPickerDoneButtonPressed:nil];
+                return;
+            }
+
+            UIPickerView *bidsPicker = [UIPickerView new];
+            bidsPicker.backgroundColor = [UIColor whiteColor];
+            bidsPicker.dataSource = self;
+            bidsPicker.delegate = self;
+            bidsPicker.origin = CGPointMake(0, self.view.height);
+
+            CGRect pickerFrame = bidsPicker.bounds;
+            pickerFrame.size.height += 44.0;
+            bidsPicker.originY = 44.0;
+            UIView *pickerView = [[UIView alloc] initWithFrame:pickerFrame];
+            pickerView.backgroundColor = [UIColor whiteColor];
+            self.motivesPicker = pickerView;
+
+            UIView *separatorTop = [[UIView alloc] initWithFrame:CGRectMake(0, 0, pickerView.width, PIXEL)];
+            [pickerView addSubview:separatorTop];
+            separatorTop.backgroundColor = [UIColor colorWithColorCode:@"cccccc"];
+
+            UIButton *done = [UIButton buttonWithType:UIButtonTypeCustom];
+            [done setTitle:@"Done" forState:UIControlStateNormal];
+            [done setTitleColor:[UIColor colorWithColorCode:@"FF6C2F"] forState:UIControlStateNormal];
+            done.frame = CGRectMake(pickerView.width - 100, 0, 100, 44);
+            [done addTarget:self action:@selector(motivesPickerDoneButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+            [pickerView addSubview:done];
+
+            NSNumber *defaultValue = @10;
+            NSNumber *selectedValue = self.taskDictionary[TaskBidKey];
+            if (!selectedValue) {
+                selectedValue = defaultValue;
+                self.taskDictionary[TaskBidKey] = defaultValue;
+            }
+            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:VCSectionBids] withRowAnimation:UITableViewRowAnimationAutomatic];
+            [pickerView addSubview:bidsPicker];
+            pickerView.originY = self.view.height;
+            [self.view addSubview:pickerView];
+            [UIView animateWithDuration:0.3 animations:^(){
+                pickerView.origin = CGPointMake(0, self.view.height - pickerView.height);
+                self.motivesPickerPadding = pickerView.height;
+            }];
+            break;
+        }
+        case VCSectionFriends:
+        {
+            NSArray *friends = self.taskDictionary[TaskFriendsKey];
+            User *friend;
+            if (indexPath.row < [friends count]) {
+                friend = friends[indexPath.row];
+            }
+
+            if (friend) {
+#warning Remove friend
+            } else {
+                [self performSegueWithIdentifier:@"SelectFriends" sender:indexPath];
+            }
+            break;
         }
     }
 }
@@ -373,6 +498,39 @@ typedef NS_ENUM(NSUInteger, VCSectionDateRow) {
     NSDate *newDate = sender.date;
     self.taskDictionary[TaskDateKey] = newDate;
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:VCSectionDate] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (void)motivesPickerDoneButtonPressed:(UIButton *)sender
+{
+    UIView *view = self.motivesPicker;
+    [UIView animateWithDuration:0.3 animations:^() {
+        view.originY = view.superview.height;
+        self.motivesPickerPadding = 0;
+    } completion:^(BOOL complete) {
+        [view removeFromSuperview];
+        self.motivesPicker = nil;
+    }];
+}
+
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+    return 1;
+}
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    return [self.values count];
+}
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+    return [NSString stringWithFormat:@"%@ motives", self.values[row]];
+}
+
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+    self.taskDictionary[TaskBidKey] = self.values[row];
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:VCSectionBids] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 - (void)inputCellDidChangeText:(InputCell *)inputCell

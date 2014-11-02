@@ -98,10 +98,30 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="Mxb-jj-gnt"/>
+                    <connections>
+                        <segue destination="C6g-CI-AP8" kind="show" identifier="SelectFriends" id="2sn-Qt-Zwc"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yCu-Hg-9fk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3933" y="1074"/>
+        </scene>
+        <!--Friends ListVC-->
+        <scene sceneID="1aD-iS-9dL">
+            <objects>
+                <viewController id="C6g-CI-AP8" customClass="FriendsListVC" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Ihm-M7-guy"/>
+                        <viewControllerLayoutGuide type="bottom" id="Yli-xy-Zqx"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="rSE-Ml-PUm">
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="BAw-KU-2g7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4897.5" y="1074"/>
         </scene>
         <!--NavigationVC-->
         <scene sceneID="qaL-aS-gJq">

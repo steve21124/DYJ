@@ -35,6 +35,8 @@
 		B032D35D19E9396600D9D5A4 /* Roboto-BoldCondensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B032D35B19E9396600D9D5A4 /* Roboto-BoldCondensed.ttf */; };
 		B032D35E19E9396600D9D5A4 /* Roboto-Condensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B032D35C19E9396600D9D5A4 /* Roboto-Condensed.ttf */; };
 		B032D36219E9466600D9D5A4 /* Notification.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D36119E9466600D9D5A4 /* Notification.m */; };
+		B06D51CA1A06B48900063BFE /* FriendsListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B06D51C91A06B48900063BFE /* FriendsListVC.m */; };
+		B06D51CE1A06B88D00063BFE /* BaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B06D51CD1A06B88D00063BFE /* BaseVC.m */; };
 		B0CABD9919FD943A002C37FD /* InputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9819FD943A002C37FD /* InputCell.m */; };
 		B0CABD9C19FD9AD0002C37FD /* BaseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9B19FD9AD0002C37FD /* BaseCell.m */; };
 		B0CABD9F19FDA6DB002C37FD /* InfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9E19FDA6DB002C37FD /* InfoCell.m */; };
@@ -89,6 +91,10 @@
 		B032D35C19E9396600D9D5A4 /* Roboto-Condensed.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Condensed.ttf"; sourceTree = "<group>"; };
 		B032D36019E9466600D9D5A4 /* Notification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Notification.h; sourceTree = "<group>"; };
 		B032D36119E9466600D9D5A4 /* Notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Notification.m; sourceTree = "<group>"; };
+		B06D51C81A06B48900063BFE /* FriendsListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendsListVC.h; sourceTree = "<group>"; };
+		B06D51C91A06B48900063BFE /* FriendsListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendsListVC.m; sourceTree = "<group>"; };
+		B06D51CC1A06B88D00063BFE /* BaseVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseVC.h; sourceTree = "<group>"; };
+		B06D51CD1A06B88D00063BFE /* BaseVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseVC.m; sourceTree = "<group>"; };
 		B0CABD9719FD943A002C37FD /* InputCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputCell.h; sourceTree = "<group>"; };
 		B0CABD9819FD943A002C37FD /* InputCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputCell.m; sourceTree = "<group>"; };
 		B0CABD9A19FD9AD0002C37FD /* BaseCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseCell.h; sourceTree = "<group>"; };
@@ -218,6 +224,7 @@
 			isa = PBXGroup;
 			children = (
 				B032D34D19E8FCE500D9D5A4 /* NavigationVC */,
+				B06D51CB1A06B88000063BFE /* BaseVC */,
 				B032D34E19E8FCED00D9D5A4 /* TabBarVC */,
 			);
 			name = BaseVCs;
@@ -277,6 +284,7 @@
 		B032D34019E8F80B00D9D5A4 /* MainVCs */ = {
 			isa = PBXGroup;
 			children = (
+				B06D51C71A06B44400063BFE /* FriendsListVC */,
 				B032D33319E8F62000D9D5A4 /* MyJobs */,
 				B032D33F19E8F7F600D9D5A4 /* AddJob */,
 				B032D33B19E8F7B400D9D5A4 /* FriendsJobs */,
@@ -340,6 +348,24 @@
 				B032D36119E9466600D9D5A4 /* Notification.m */,
 			);
 			name = Classes;
+			sourceTree = "<group>";
+		};
+		B06D51C71A06B44400063BFE /* FriendsListVC */ = {
+			isa = PBXGroup;
+			children = (
+				B06D51C81A06B48900063BFE /* FriendsListVC.h */,
+				B06D51C91A06B48900063BFE /* FriendsListVC.m */,
+			);
+			name = FriendsListVC;
+			sourceTree = "<group>";
+		};
+		B06D51CB1A06B88000063BFE /* BaseVC */ = {
+			isa = PBXGroup;
+			children = (
+				B06D51CC1A06B88D00063BFE /* BaseVC.h */,
+				B06D51CD1A06B88D00063BFE /* BaseVC.m */,
+			);
+			name = BaseVC;
 			sourceTree = "<group>";
 		};
 		B0CABD9619FD8E81002C37FD /* Cells */ = {
@@ -466,6 +492,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B06D51CA1A06B48900063BFE /* FriendsListVC.m in Sources */,
 				B032D22F19E8570700D9D5A4 /* StartVC.m in Sources */,
 				B008AF4219F7C8FC00445922 /* TaskCellItem.m in Sources */,
 				B0CABD9919FD943A002C37FD /* InputCell.m in Sources */,
@@ -480,6 +507,7 @@
 				B032D32819E88C6000D9D5A4 /* Categories.m in Sources */,
 				B0CABD9C19FD9AD0002C37FD /* BaseCell.m in Sources */,
 				B032D34919E8F88100D9D5A4 /* AddJobVC.m in Sources */,
+				B06D51CE1A06B88D00063BFE /* BaseVC.m in Sources */,
 				B032D34319E8F86100D9D5A4 /* FriendsJobsVC.m in Sources */,
 				B032D33219E8F5C000D9D5A4 /* TabBarVC.m in Sources */,
 				B032D34619E8F87200D9D5A4 /* NotificationsVC.m in Sources */,
