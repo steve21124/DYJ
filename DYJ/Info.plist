@@ -28,7 +28,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>3</string>
 	<key>FacebookAppID</key>
 	<string>578082642318762</string>
 	<key>FacebookDisplayName</key>
@@ -40,8 +40,6 @@
 		<string>HELVETICANEUECYR-BOLD.OTF</string>
 		<string>HELVETICANEUECYR-LIGHT.OTF</string>
 		<string>HELVETICANEUECYR-MEDIUM.OTF</string>
-		<string>Roboto-BoldCondensed.ttf</string>
-		<string>Roboto-Condensed.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

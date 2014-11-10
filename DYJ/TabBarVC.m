@@ -102,7 +102,7 @@
         self.notificationsView.backgroundColor = [UIColor colorWithColorCode:@"ff7b7b"];
         self.notificationsLabel = [[UILabel alloc] initWithFrame:self.notificationsView.bounds];
         self.notificationsLabel.textAlignment = NSTextAlignmentCenter;
-        self.notificationsLabel.font = [UIFont fontWithName:@"Roboto-BoldCondensed" size:12];
+        self.notificationsLabel.font = [UIFont fontWithName:@"HelveticaNeueCyr-Light" size:12];
         self.notificationsLabel.textColor = [UIColor whiteColor];
         [self.notificationsView addSubview:self.notificationsLabel];
         self.notificationsView.center = CGPointMake(self.tabBar.width / 2.0, 0.0);

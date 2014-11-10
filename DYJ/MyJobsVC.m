@@ -106,8 +106,13 @@
 
 - (void)loadTasks
 {
+    PFUser *localUser = [PFUser currentUser];
+    if (!localUser) {
+        return;
+    }
+
     PFQuery *taskQuery = [PFQuery queryWithClassName:[Task parseClassName]];
-    [taskQuery whereKey:@"creator" equalTo:[PFUser currentUser]];
+    [taskQuery whereKey:@"creator" equalTo:localUser];
     NSArray *tasks = [taskQuery findObjects];
 
     self.tasks = tasks;

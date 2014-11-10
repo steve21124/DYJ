@@ -32,8 +32,6 @@
 		B032D35119E8FE3E00D9D5A4 /* NavigationVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D35019E8FE3E00D9D5A4 /* NavigationVC.m */; };
 		B032D35519E9012400D9D5A4 /* Helper.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D35419E9012400D9D5A4 /* Helper.m */; };
 		B032D35819E9061000D9D5A4 /* FriendsUpdater.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D35719E9061000D9D5A4 /* FriendsUpdater.m */; };
-		B032D35D19E9396600D9D5A4 /* Roboto-BoldCondensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B032D35B19E9396600D9D5A4 /* Roboto-BoldCondensed.ttf */; };
-		B032D35E19E9396600D9D5A4 /* Roboto-Condensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B032D35C19E9396600D9D5A4 /* Roboto-Condensed.ttf */; };
 		B032D36219E9466600D9D5A4 /* Notification.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D36119E9466600D9D5A4 /* Notification.m */; };
 		B06D51CA1A06B48900063BFE /* FriendsListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B06D51C91A06B48900063BFE /* FriendsListVC.m */; };
 		B06D51CE1A06B88D00063BFE /* BaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B06D51CD1A06B88D00063BFE /* BaseVC.m */; };
@@ -87,8 +85,6 @@
 		B032D35419E9012400D9D5A4 /* Helper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Helper.m; sourceTree = "<group>"; };
 		B032D35619E9061000D9D5A4 /* FriendsUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendsUpdater.h; sourceTree = "<group>"; };
 		B032D35719E9061000D9D5A4 /* FriendsUpdater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FriendsUpdater.m; sourceTree = "<group>"; };
-		B032D35B19E9396600D9D5A4 /* Roboto-BoldCondensed.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-BoldCondensed.ttf"; sourceTree = "<group>"; };
-		B032D35C19E9396600D9D5A4 /* Roboto-Condensed.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Roboto-Condensed.ttf"; sourceTree = "<group>"; };
 		B032D36019E9466600D9D5A4 /* Notification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Notification.h; sourceTree = "<group>"; };
 		B032D36119E9466600D9D5A4 /* Notification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Notification.m; sourceTree = "<group>"; };
 		B06D51C81A06B48900063BFE /* FriendsListVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendsListVC.h; sourceTree = "<group>"; };
@@ -331,8 +327,6 @@
 				B008AF3419F7929A00445922 /* HELVETICANEUECYR-BOLD.OTF */,
 				B008AF3519F7929A00445922 /* HELVETICANEUECYR-LIGHT.OTF */,
 				B008AF3619F7929A00445922 /* HELVETICANEUECYR-MEDIUM.OTF */,
-				B032D35B19E9396600D9D5A4 /* Roboto-BoldCondensed.ttf */,
-				B032D35C19E9396600D9D5A4 /* Roboto-Condensed.ttf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -446,8 +440,6 @@
 				B032D23219E8570700D9D5A4 /* Main.storyboard in Resources */,
 				B008AF3819F7929A00445922 /* HELVETICANEUECYR-LIGHT.OTF in Resources */,
 				B032D23719E8570700D9D5A4 /* LaunchScreen.xib in Resources */,
-				B032D35D19E9396600D9D5A4 /* Roboto-BoldCondensed.ttf in Resources */,
-				B032D35E19E9396600D9D5A4 /* Roboto-Condensed.ttf in Resources */,
 				B032D23419E8570700D9D5A4 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
