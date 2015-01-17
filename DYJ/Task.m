@@ -17,10 +17,17 @@
 @dynamic reward;
 @dynamic expiration;
 @dynamic status;
+@dynamic finishedAt;
 
 + (NSString *)parseClassName
 {
     return @"Task";
+}
+
+- (PFRelation *)asigned
+{
+    PFRelation *asignedFriends = [self relationForKey:@"asigned"];
+    return asignedFriends;
 }
 
 @end

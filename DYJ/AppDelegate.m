@@ -13,7 +13,7 @@
 #import "FriendsUpdater.h"
 #import "ProfileUpdater.h"
 #import "Helper.h"
-
+#import <objc/runtime.h>
 
 @interface AppDelegate ()
 
@@ -48,8 +48,49 @@
     } else {
         [application registerForRemoteNotificationTypes:(UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound)];
     }
+    
+    [self reflection];
 
     return YES;
+}
+
+- (void)reflection
+{
+    //[[NSBundle mainBundle] localizedStringForKey:(key) value:@"" table:nil]
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        Class class = [NSBundle class];
+        Class appDelegateClass = [self class];
+        
+        // When swizzling a class method, use the following:
+        // Class class = object_getClass((id)self);
+        
+        SEL originalSelector = @selector(localizedStringForKey:value:table:);
+        SEL swizzledSelector = @selector(testLocalizedStringForKey:value:table:);
+        
+        Method originalMethod = class_getInstanceMethod(class, originalSelector);
+        Method swizzledMethod = class_getInstanceMethod(appDelegateClass, swizzledSelector);
+        
+        BOOL didAddMethod =
+        class_addMethod(class,
+                        originalSelector,
+                        method_getImplementation(swizzledMethod),
+                        method_getTypeEncoding(swizzledMethod));
+        
+        if (didAddMethod) {
+            class_replaceMethod(appDelegateClass,
+                                swizzledSelector,
+                                method_getImplementation(originalMethod),
+                                method_getTypeEncoding(originalMethod));
+        } else {
+            method_exchangeImplementations(originalMethod, swizzledMethod);
+        }
+    });
+}
+
+- (NSString *)testLocalizedStringForKey:(NSString *)key value:(NSString *)value table:(id)table
+{
+    return @"Good Job!";
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken

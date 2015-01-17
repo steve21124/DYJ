@@ -7,10 +7,24 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Task.h"
+#import "TaskCellItem.h"
+
+@class TaskCell;
+
+@protocol TaskCellDelegate <NSObject>
+
+- (void)taskCell:(TaskCell *)taskCell didSelectItemAtIndex:(NSInteger)index;
+
+@end
 
 @interface TaskCell : UITableViewCell
 
-- (void)setTaskTitle:(NSString *)title;
+@property (nonatomic) id <TaskCellDelegate> delegate;
+
+@property (nonatomic) NSArray *taskItemTypes;
+@property (nonatomic) Task *task;
+- (void)setAvatarsURLs:(NSArray *)avatars;
 
 + (CGFloat)heightWithTitle:(NSString *)title width:(CGFloat)width;
 

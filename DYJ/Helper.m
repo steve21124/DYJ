@@ -41,7 +41,7 @@ NSString *const HelperDidUpdateNotifications = @"HelperDidUpdateNotifications";
     }
 }
 
-- (void)loginCompletion:(void(^)(User *, NSError *))block
+- (void)loginCompletion:(void(^)(PFUser *, NSError *))block
 {
     // Set permissions required from the facebook user account
     NSArray *permissionsArray = @[@"user_about_me", @"user_relationships", @"user_birthday", @"user_location", @"user_friends"];
@@ -52,6 +52,7 @@ NSString *const HelperDidUpdateNotifications = @"HelperDidUpdateNotifications";
             // New user gain 1000 points on balance.
             if (user.isNew) {
                 [user setObject:@(1000) forKey:@"balance"];
+                [user save];
             }
 
             // Start updating info.
@@ -61,9 +62,9 @@ NSString *const HelperDidUpdateNotifications = @"HelperDidUpdateNotifications";
             // Post notification.
             [[NSNotificationCenter defaultCenter] postNotificationName:HelperDidUpdateLoginStatusNotification object:nil];
 
-            block((User *)user, error);
+            block(user, error);
         } else {
-            block((User *)user, error);
+            block(user, error);
         }
     }];
 }

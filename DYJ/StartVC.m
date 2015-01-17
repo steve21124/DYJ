@@ -67,7 +67,7 @@
     self.appTitle.textColor = [UIColor colorWithColorCode:@"FF6C2F"];
     self.appTitle.textAlignment = NSTextAlignmentCenter;
     self.appTitle.font = [UIFont fontWithName:@"HelveticaNeueCyr-Light" size:30];
-    self.appTitle.text = @"Do Your Job!";
+    self.appTitle.text = NSLocalizedString(@"Do Your Job!", nil);
     [self.helloView addSubview:self.appTitle];
 
     // Facebook login button.
@@ -84,7 +84,7 @@
 - (void)loginButtonTouchHandler:(id)sender
 {
     // Login using Facebook
-    [[Helper sharedHelper] loginCompletion:^(User *user, NSError *error) {
+    [[Helper sharedHelper] loginCompletion:^(PFUser *user, NSError *error) {
         if (!user) {
             NSString *errorMessage = nil;
             if (!error) {

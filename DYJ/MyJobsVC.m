@@ -15,7 +15,7 @@
 #import "AddJobVC.h"
 #import "Task.h"
 
-@interface MyJobsVC () <UITableViewDataSource, UITableViewDelegate, JobCellDelegate, AddJobVCDelegate>
+@interface MyJobsVC () <UITableViewDataSource, UITableViewDelegate, JobCellDelegate, AddJobVCDelegate, TaskCellDelegate>
 
 @property UIView *hintView;
 @property UILabel *instructions;
@@ -52,7 +52,6 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    [self.tableView registerClass:[JobCell class] forCellReuseIdentifier:NSStringFromClass([JobCell class])];
     [self.tableView registerClass:[TaskCell class] forCellReuseIdentifier:NSStringFromClass([TaskCell class])];
     [self.view addSubview:self.tableView];
 
@@ -113,6 +112,7 @@
 
     PFQuery *taskQuery = [PFQuery queryWithClassName:[Task parseClassName]];
     [taskQuery whereKey:@"creator" equalTo:localUser];
+    [taskQuery orderByDescending:@"createdAt"];
     NSArray *tasks = [taskQuery findObjects];
 
     self.tasks = tasks;
@@ -137,35 +137,26 @@
     TaskCell *cell = [self.tableView dequeueReusableCellWithIdentifier:NSStringFromClass([TaskCell class]) forIndexPath:indexPath];
 
     Task *task = self.tasks[indexPath.row];
-    NSString *title = task.title;
-    [cell setTaskTitle:title];
+    cell.delegate = self;
+    cell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeTaskStatusButton)];
+    cell.task = task;
+    
+    [[task.asigned query] findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            NSMutableArray *urls = [NSMutableArray new];
+            for (PFUser *user in objects) {
+                [urls addObject:user.profilePictureURL];
+            }
+            [cell setAvatarsURLs:urls];
+        }
+    }];
 
     return cell;
 }
 
-- (void)jobCellButtonPressed:(JobCell *)cell
+- (void)taskCell:(TaskCell *)taskCell didSelectItemAtIndex:(NSInteger)index
 {
-    [FBRequestConnection startForMyFriendsWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-        if (!error) {
-            // result will contain an array with your user's friends in the "data" key
-            NSArray *friendObjects = [result objectForKey:@"data"];
-            NSMutableArray *friendIds = [NSMutableArray arrayWithCapacity:friendObjects.count];
-            // Create a list of friends' Facebook IDs
-            for (NSDictionary *friendObject in friendObjects) {
-                [friendIds addObject:[friendObject objectForKey:@"id"]];
-            }
-
-            // Construct a PFUser query that will find friends whose facebook ids
-            // are contained in the current user's friend list.
-            PFQuery *friendQuery = [PFUser query];
-            [friendQuery whereKey:@"fbId" containedIn:friendIds];
-            // Create our Installation query
-            // Send push notification to query
-            PFQuery *pushQuery = [PFInstallation query];
-            [pushQuery whereKey:@"user" matchesQuery:friendQuery];
-            [PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:@"Move on!"];
-        }
-    }];
+    
 }
 
 @end

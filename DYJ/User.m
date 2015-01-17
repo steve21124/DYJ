@@ -8,7 +8,21 @@
 
 #import "User.h"
 
-@implementation User
+@implementation PFUser (User)
+
+#pragma mark - Balance
+
+- (NSNumber *)balance
+{
+    return [self objectForKey:@"balance"];
+}
+
+- (void)setBalance:(NSNumber *)balance
+{
+    [self setObject:balance forKey:@"balance"];
+}
+
+#pragma mark - Profile
 
 - (NSString *)profileName
 {
@@ -16,7 +30,7 @@
     return profile[@"name"];
 }
 
-- (NSString *)profileURL
+- (NSString *)profilePictureURL
 {
     NSDictionary *profile = [self profile];
     return profile[@"pictureURL"];

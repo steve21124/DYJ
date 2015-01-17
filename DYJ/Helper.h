@@ -19,7 +19,7 @@ extern NSString *const HelperDidUpdateNotifications;
 + (instancetype)sharedHelper;
 
 @property (nonatomic) BOOL isAuthorized;
-- (void)loginCompletion:(void(^)(User *, NSError *))block;
+- (void)loginCompletion:(void(^)(PFUser *, NSError *))block;
 - (void)logout;
 
 @property NSArray *notifications;

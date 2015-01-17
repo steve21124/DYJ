@@ -9,13 +9,15 @@
 #import "TaskCell.h"
 #import "TaskCellItem.h"
 #import "Categories.h"
+#import "FriendsView.h"
 
 @interface TaskCell ()
 
 @property UIView *background;
 @property UILabel *title;
-@property UIView *avatars;
+@property FriendsView *avatars;
 @property NSArray *taskItems;
+@property NSArray *separators;
 
 @end
 
@@ -36,7 +38,6 @@
     CGFloat sidePadding = 12.0;
     CGFloat padding = 10.0;
     CGFloat itemsHeight = 48.0;
-    NSInteger numberOfTaskItems = 3;
 
     // Background.
     CGRect backgroundFrame = self.bounds;
@@ -59,12 +60,23 @@
     [self.background addSubview:self.title];
 
     // Avatars.
-    self.avatars = [[UIView alloc] initWithFrame:CGRectMake(15.0, 0, self.background.width - 30.0, 24)];
+    self.avatars = [[FriendsView alloc] initWithFrame:CGRectMake(15.0, 0, self.background.width - 30.0, 24)];
     self.avatars.originY = self.background.height - itemsHeight - self.avatars.height - 8.0;
     self.avatars.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
-    self.avatars.backgroundColor = [UIColor grayColor];
     [self.background addSubview:self.avatars];
+}
 
+- (void)setTaskItemTypes:(NSArray *)taskItemTypes
+{
+    if ([_taskItemTypes isEqualToArray:taskItemTypes]) {
+        return;
+    } else {
+        _taskItemTypes = taskItemTypes;
+    }
+    
+    NSInteger numberOfTaskItems = [taskItemTypes count];
+    CGFloat itemsHeight = 48.0;
+    
     // Items.
     NSMutableArray *items = [NSMutableArray new];
     for (NSInteger index = 0; index < numberOfTaskItems; index++) {
@@ -73,24 +85,57 @@
         CGRect itemRect = CGRectMake(itemOriginX, self.background.height - itemsHeight, itemWidth, itemsHeight);
         itemRect = CGRectIntegral(itemRect);
         TaskCellItem *item = [TaskCellItem itemWithFrame:itemRect];
-        item.autoresizingMask = UIViewAutoresizingFlexibleTopMargin;
+        item.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
         [self.background addSubview:item];
+        [item addTarget:self action:@selector(taskItemSelected:) forControlEvents:UIControlEventTouchUpInside];
         [items addObject:item];
     }
     self.taskItems = items;
-
+    
     // Lines.
-    UIView *horizontalLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.background.height - itemsHeight, self.background.width, 1.0 / [UIScreen mainScreen].scale)];
+    NSMutableArray *separators = [NSMutableArray new];
+    UIView *horizontalLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.background.height - itemsHeight - PIXEL, self.background.width, PIXEL)];
     horizontalLine.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     horizontalLine.backgroundColor = [UIColor colorWithColorCode:@"E8E8E8"];
     [self.background addSubview:horizontalLine];
+    [separators addObject:horizontalLine];
     for (NSInteger index = 1; index < numberOfTaskItems; index++) {
         CGFloat originX = floor(self.background.width * index / numberOfTaskItems);
-        CGRect lineFrame = CGRectMake(originX, self.background.height - itemsHeight, 1.0 / [UIScreen mainScreen].scale, itemsHeight);
+        CGRect lineFrame = CGRectMake(originX, self.background.height - itemsHeight, PIXEL, itemsHeight);
         UIView *line = [[UIView alloc] initWithFrame:lineFrame];
         line.backgroundColor = [UIColor colorWithColorCode:@"E8E8E8"];
-        line.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin;
+        line.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
         [self.background addSubview:line];
+        [separators addObject:line];
+    }
+    self.separators = separators;
+}
+
+- (void)taskItemSelected:(id)sender
+{
+    NSInteger index = [self.taskItems indexOfObject:sender];
+    if (self.delegate) {
+        [self.delegate taskCell:self didSelectItemAtIndex:index];
+    }
+}
+
+- (void)setAvatarsURLs:(NSArray *)avatars
+{
+    self.avatars.avatarsURLs = avatars;
+}
+
+- (void)setTask:(Task *)task
+{
+    _task = task;
+    
+    // Title.
+    [self setTaskTitle:self.task.title];
+    
+    // Items.
+    for (TaskCellItem *item in self.taskItems) {
+        NSInteger index = [self.taskItems indexOfObject:item];
+        item.task = self.task;
+        item.type = [self.taskItemTypes[index] unsignedIntegerValue];
     }
 }
 

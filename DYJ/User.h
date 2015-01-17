@@ -8,9 +8,10 @@
 
 #import <Parse/Parse.h>
 
-@interface User : PFUser
+@interface PFUser (User)
 
+@property (nonatomic) NSNumber *balance;
 @property (nonatomic, readonly) NSString *profileName;
-@property (nonatomic, readonly) NSString *profileURL;
+@property (nonatomic, readonly) NSString *profilePictureURL;
 
 @end

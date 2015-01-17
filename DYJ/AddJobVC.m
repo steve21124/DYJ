@@ -11,6 +11,7 @@
 #import "Task.h"
 #import "InputCell.h"
 #import "InfoCell.h"
+#import "FriendsListVC.h"
 
 NSString *const TaskTitleKey = @"TaskTitleKey";
 NSString *const TaskDescriptionKey = @"TaskDescriptionKey";
@@ -42,7 +43,7 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
     VCSectionBidsRowsCount
 };
 
-@interface AddJobVC () <UITableViewDataSource, UITableViewDelegate, InputCellDelegate, UIPickerViewDataSource, UIPickerViewDelegate>
+@interface AddJobVC () <UITableViewDataSource, UITableViewDelegate, InputCellDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FriendsListVCDelegate>
 
 @property NSMutableDictionary *taskDictionary;
 @property UITableView *tableView;
@@ -175,13 +176,26 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
         return;
     }
 
+    // Create new task.
     Task *newTask = [Task new];
     newTask.title = self.taskDictionary[TaskTitleKey];
     newTask.taskDescription = self.taskDictionary[TaskDescriptionKey];
     newTask.creator = [PFUser currentUser];
     newTask.expiration = self.taskDictionary[TaskDateKey];
     newTask.reward = self.taskDictionary[TaskBidKey];
-    [newTask save];
+    for (PFUser *user in self.taskDictionary[TaskFriendsKey]) {
+        [newTask.asigned addObject:user];
+    }
+    
+    // Make a transaction.
+    PFUser *localUser = [PFUser currentUser];
+    [localUser fetch];
+    if (localUser.balance > newTask.reward) {
+        [newTask save];
+        localUser.balance = @([localUser.balance integerValue] - [newTask.reward integerValue]);
+        [localUser save]; 
+    }
+    
     if (self.delegate) {
         [self.delegate addJobVCDidFinish:self];
     }
@@ -323,7 +337,7 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
             cell.separatorBottom.hidden = !isLastCell;
 
             NSArray *friends = self.taskDictionary[TaskFriendsKey];
-            User *friend;
+            PFUser *friend;
             if (indexPath.row < [friends count]) {
                 friend = friends[indexPath.row];
             }
@@ -466,7 +480,7 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
         case VCSectionFriends:
         {
             NSArray *friends = self.taskDictionary[TaskFriendsKey];
-            User *friend;
+            PFUser *friend;
             if (indexPath.row < [friends count]) {
                 friend = friends[indexPath.row];
             }
@@ -574,6 +588,21 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
             break;
         }
     }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"SelectFriends"]) {
+        FriendsListVC *vc = segue.destinationViewController;
+        vc.delegate = self;
+        vc.asignedFriends = self.taskDictionary[TaskFriendsKey];
+    }
+}
+
+- (void)friendsListVCWillClose:(FriendsListVC *)vc
+{
+    self.taskDictionary[TaskFriendsKey] = vc.asignedFriends;
+    [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:VCSectionFriends] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 @end

@@ -67,9 +67,9 @@
             NSArray *friends = [friendQuery findObjects];
 
             // Add relations with friends.
-            User *localUser = [User currentUser];
+            PFUser *localUser = [PFUser currentUser];
             PFRelation *friendsRelation = [localUser relationForKey:@"friends"];
-            for (User *friend in friends) {
+            for (PFUser *friend in friends) {
                 [friendsRelation addObject:friend];
             }
             [localUser saveInBackground];

@@ -10,13 +10,13 @@
 #import "Task.h"
 
 typedef NS_ENUM(NSUInteger, TaskCellItemType) {
+    TaskCellItemTypeLoading,
     TaskCellItemTypeTimeLeft,
     TaskCellItemTypeBid,
     TaskCellItemTypeRemindButton,
     TaskCellItemTypeRemindStatus,
     TaskCellItemTypeTaskStatusButton,
     TaskCellItemTypeTaskStatus,
-    TaskCellItemTypeLoading,
     TaskCellItemTypesCount
 };
 
@@ -24,7 +24,7 @@ typedef NS_ENUM(NSUInteger, TaskCellItemType) {
 
 + (instancetype)itemWithFrame:(CGRect)frame;
 
-@property (nonatomic, readonly) TaskCellItemType type;
-@property (nonatomic, readonly) Task *task;
+@property (nonatomic) TaskCellItemType type;
+@property (nonatomic) Task *task;
 
 @end

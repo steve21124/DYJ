@@ -7,12 +7,13 @@
 //
 
 #import "FriendsJobsVC.h"
-#import "JobCell.h"
+#import "TaskCell.h"
 #import "Categories.h"
 #import <Parse/Parse.h>
 #import <ParseFacebookUtils/PFFacebookUtils.h>
+#import "Helper.h"
 
-@interface FriendsJobsVC () <UITableViewDataSource, UITableViewDelegate, JobCellDelegate>
+@interface FriendsJobsVC () <UITableViewDataSource, UITableViewDelegate, TaskCellDelegate>
 
 @property UIView *hintView;
 @property UILabel *instructions;
@@ -31,10 +32,13 @@
 
     // Table View.
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
+    self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    self.tableView.contentInset = UIEdgeInsetsMake(12.0, 0, 0, 0);
+    self.tableView.backgroundColor = [UIColor colorWithColorCode:@"EAEAEA"];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    [self.tableView registerClass:[JobCell class] forCellReuseIdentifier:NSStringFromClass([JobCell class])];
+    [self.tableView registerClass:[TaskCell class] forCellReuseIdentifier:NSStringFromClass([TaskCell class])];
     [self.view addSubview:self.tableView];
 
     // Hint view.
@@ -56,59 +60,76 @@
     self.instructions.attributedText = attributedInstructions;
 
     // Load test data.
-    [self loadTestData];
+    [self loadTasks];
+    
 }
 
-- (void)loadTestData
+- (void)loadTasks
 {
-    NSMutableArray *tasks = [NSMutableArray new];
-
+    PFUser *localUser = [PFUser currentUser];
+    if (!localUser) {
+        return;
+    }
+    
+    PFQuery *taskQuery = [PFQuery queryWithClassName:[Task parseClassName]];
+    [taskQuery whereKey:@"asigned" equalTo:[PFUser currentUser]];
+    [taskQuery orderByDescending:@"createdAt"];
+    NSArray *tasks = [taskQuery findObjects];
+//    
+//    query findObjectsInBackgroundWithBlock:^(NSArray *tasks, NSError *error) {
+//        if (!error) {
+//            
+//        }
+//    }];
+    
     self.tasks = tasks;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.tasks count];
+    NSInteger numberOfRows = [self.tasks count];
+    self.hintView.hidden = numberOfRows;
+    return numberOfRows;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [JobCell height];
+    Task *task = self.tasks[indexPath.row];
+    NSString *title = task.title;
+    return [TaskCell heightWithTitle:title width:self.tableView.width];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    JobCell *cell = [self.tableView dequeueReusableCellWithIdentifier:NSStringFromClass([JobCell class]) forIndexPath:indexPath];
-
-    cell.type = JobCellTypeNotMineCurrent;
+    TaskCell *cell = [self.tableView dequeueReusableCellWithIdentifier:NSStringFromClass([TaskCell class]) forIndexPath:indexPath];
+    
+    Task *task = self.tasks[indexPath.row];
     cell.delegate = self;
-
+    cell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeRemindButton)];
+    cell.task = task;
+    
+    [[task.asigned query] findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            NSMutableArray *urls = [NSMutableArray new];
+            for (PFUser *user in objects) {
+                [urls addObject:user.profilePictureURL];
+            }
+            [cell setAvatarsURLs:urls];
+        }
+    }];
+    
     return cell;
 }
 
-- (void)jobCellButtonPressed:(JobCell *)cell
+- (void)taskCell:(TaskCell *)taskCell didSelectItemAtIndex:(NSInteger)index
 {
-    [FBRequestConnection startForMyFriendsWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
-        if (!error) {
-            // result will contain an array with your user's friends in the "data" key
-            NSArray *friendObjects = [result objectForKey:@"data"];
-            NSMutableArray *friendIds = [NSMutableArray arrayWithCapacity:friendObjects.count];
-            // Create a list of friends' Facebook IDs
-            for (NSDictionary *friendObject in friendObjects) {
-                [friendIds addObject:[friendObject objectForKey:@"id"]];
-            }
-
-            // Construct a PFUser query that will find friends whose facebook ids
-            // are contained in the current user's friend list.
-            PFQuery *friendQuery = [PFUser query];
-            [friendQuery whereKey:@"fbId" containedIn:friendIds];
-            // Create our Installation query
-            // Send push notification to query
-            PFQuery *pushQuery = [PFInstallation query];
-            [pushQuery whereKey:@"user" matchesQuery:friendQuery];
-            [PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:@"Move on!"];
-        }
-    }];
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:taskCell];
+    Task *task = self.tasks[indexPath.row];
+    
+    // Send push notification to query
+    PFQuery *pushQuery = [PFInstallation query];
+    [pushQuery whereKey:@"user" equalTo:task.creator];
+    [PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:@"Move on!"];
 }
 
 @end
