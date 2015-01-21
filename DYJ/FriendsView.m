@@ -57,6 +57,7 @@
             dispatch_async(dispatch_get_main_queue(), ^() {
                 UIImageView *avatarView = [[UIImageView alloc] initWithFrame:CGRectMake(i * padding, 0, avatarSize, avatarSize)];
                 avatarView.layer.cornerRadius = avatarView.width / 2.0;
+                avatarView.clipsToBounds = YES;
                 avatarView.image = [UIImage imageWithData:data];
                 [self addSubview:avatarView];
                 [avatarsViews addObject:avatarView];

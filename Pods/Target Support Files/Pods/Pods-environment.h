@@ -57,19 +57,18 @@
 // Facebook-iOS-SDK
 #define COCOAPODS_POD_AVAILABLE_Facebook_iOS_SDK
 #define COCOAPODS_VERSION_MAJOR_Facebook_iOS_SDK 3
-#define COCOAPODS_VERSION_MINOR_Facebook_iOS_SDK 21
+#define COCOAPODS_VERSION_MINOR_Facebook_iOS_SDK 22
 #define COCOAPODS_VERSION_PATCH_Facebook_iOS_SDK 0
 
 // Parse
 #define COCOAPODS_POD_AVAILABLE_Parse
 #define COCOAPODS_VERSION_MAJOR_Parse 1
-#define COCOAPODS_VERSION_MINOR_Parse 5
-#define COCOAPODS_VERSION_PATCH_Parse 0
+#define COCOAPODS_VERSION_MINOR_Parse 6
+#define COCOAPODS_VERSION_PATCH_Parse 1
 
 // ParseFacebookUtils
 #define COCOAPODS_POD_AVAILABLE_ParseFacebookUtils
-// This library does not follow semantic-versioning,
-// so we were not able to define version macros.
-// Please contact the author.
-// Version: 1.5.0.1.
+#define COCOAPODS_VERSION_MAJOR_ParseFacebookUtils 1
+#define COCOAPODS_VERSION_MINOR_ParseFacebookUtils 6
+#define COCOAPODS_VERSION_PATCH_ParseFacebookUtils 1
 

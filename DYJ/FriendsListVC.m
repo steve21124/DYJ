@@ -77,6 +77,8 @@
     cell.label.text = friend.profileName;
     cell.infoLabel.text = [self users:self.asignedFriends containUser:friend] ? @"+" : @"-";
 
+    cell.separatorTop.hidden = !(indexPath.row == 0);
+
     return cell;
 }
 
