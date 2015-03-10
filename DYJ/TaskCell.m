@@ -78,6 +78,11 @@
     CGFloat itemsHeight = 48.0;
     
     // Items.
+    if (self.taskItems) {
+        for (UIView *oldItem in self.taskItems) {
+            [oldItem removeFromSuperview];
+        }
+    }
     NSMutableArray *items = [NSMutableArray new];
     for (NSInteger index = 0; index < numberOfTaskItems; index++) {
         CGFloat itemWidth = self.background.width / numberOfTaskItems;
@@ -93,6 +98,11 @@
     self.taskItems = items;
     
     // Lines.
+    if (self.separators) {
+        for (UIView *oldSeparator in self.separators) {
+            [oldSeparator removeFromSuperview];
+        }
+    }
     NSMutableArray *separators = [NSMutableArray new];
     UIView *horizontalLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.background.height - itemsHeight - PIXEL, self.background.width, PIXEL)];
     horizontalLine.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
@@ -127,11 +137,12 @@
 - (void)setTask:(Task *)task
 {
     _task = task;
-    
-    // Title.
     [self setTaskTitle:self.task.title];
-    
-    // Items.
+    [self reloadItems];
+}
+
+- (void)reloadItems
+{
     for (TaskCellItem *item in self.taskItems) {
         NSInteger index = [self.taskItems indexOfObject:item];
         item.task = self.task;

@@ -16,7 +16,6 @@
 		B008AF3F19F7C80700445922 /* TaskCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B008AF3E19F7C80700445922 /* TaskCell.m */; };
 		B008AF4219F7C8FC00445922 /* TaskCellItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B008AF4119F7C8FC00445922 /* TaskCellItem.m */; };
 		B02F048F19F2B6670034A1DE /* ProfileUpdater.m in Sources */ = {isa = PBXBuildFile; fileRef = B02F048E19F2B6670034A1DE /* ProfileUpdater.m */; };
-		B02F049219F2BAB60034A1DE /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = B02F049119F2BAB60034A1DE /* User.m */; };
 		B032D22919E8570700D9D5A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D22819E8570700D9D5A4 /* main.m */; };
 		B032D22C19E8570700D9D5A4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D22B19E8570700D9D5A4 /* AppDelegate.m */; };
 		B032D22F19E8570700D9D5A4 /* StartVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D22E19E8570700D9D5A4 /* StartVC.m */; };
@@ -39,6 +38,7 @@
 		B0CABD9919FD943A002C37FD /* InputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9819FD943A002C37FD /* InputCell.m */; };
 		B0CABD9C19FD9AD0002C37FD /* BaseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9B19FD9AD0002C37FD /* BaseCell.m */; };
 		B0CABD9F19FDA6DB002C37FD /* InfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9E19FDA6DB002C37FD /* InfoCell.m */; };
+		B0E79BC21AAE4454000B9179 /* PFUser+DYJ.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E79BC11AAE4454000B9179 /* PFUser+DYJ.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,8 +57,6 @@
 		B008AF4119F7C8FC00445922 /* TaskCellItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskCellItem.m; sourceTree = "<group>"; };
 		B02F048D19F2B6670034A1DE /* ProfileUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileUpdater.h; sourceTree = "<group>"; };
 		B02F048E19F2B6670034A1DE /* ProfileUpdater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileUpdater.m; sourceTree = "<group>"; };
-		B02F049019F2BAB60034A1DE /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
-		B02F049119F2BAB60034A1DE /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		B032D22319E8570700D9D5A4 /* DYJ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DYJ.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B032D22719E8570700D9D5A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B032D22819E8570700D9D5A4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -101,6 +99,8 @@
 		B0CABD9B19FD9AD0002C37FD /* BaseCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseCell.m; sourceTree = "<group>"; };
 		B0CABD9D19FDA6DB002C37FD /* InfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoCell.h; sourceTree = "<group>"; };
 		B0CABD9E19FDA6DB002C37FD /* InfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InfoCell.m; sourceTree = "<group>"; };
+		B0E79BC01AAE4454000B9179 /* PFUser+DYJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PFUser+DYJ.h"; sourceTree = "<group>"; };
+		B0E79BC11AAE4454000B9179 /* PFUser+DYJ.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PFUser+DYJ.m"; sourceTree = "<group>"; };
 		C9A57C83A310442AA2C49C09 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -357,8 +357,8 @@
 		B032D35F19E9465B00D9D5A4 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				B02F049019F2BAB60034A1DE /* User.h */,
-				B02F049119F2BAB60034A1DE /* User.m */,
+				B0E79BC01AAE4454000B9179 /* PFUser+DYJ.h */,
+				B0E79BC11AAE4454000B9179 /* PFUser+DYJ.m */,
 				B008AF3A19F7C7DF00445922 /* Task.h */,
 				B008AF3B19F7C7DF00445922 /* Task.m */,
 				B032D36019E9466600D9D5A4 /* Notification.h */,
@@ -514,9 +514,9 @@
 				B02F048F19F2B6670034A1DE /* ProfileUpdater.m in Sources */,
 				B032D22C19E8570700D9D5A4 /* AppDelegate.m in Sources */,
 				B032D35119E8FE3E00D9D5A4 /* NavigationVC.m in Sources */,
-				B02F049219F2BAB60034A1DE /* User.m in Sources */,
 				B032D35819E9061000D9D5A4 /* FriendsUpdater.m in Sources */,
 				B008AF3F19F7C80700445922 /* TaskCell.m in Sources */,
+				B0E79BC21AAE4454000B9179 /* PFUser+DYJ.m in Sources */,
 				B0CABD9F19FDA6DB002C37FD /* InfoCell.m in Sources */,
 				B032D33A19E8F68100D9D5A4 /* JobCell.m in Sources */,
 				B00511CF1A11646E00A61AA4 /* FriendsView.m in Sources */,

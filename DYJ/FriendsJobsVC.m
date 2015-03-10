@@ -105,11 +105,32 @@
     
     Task *task = self.tasks[indexPath.row];
     cell.delegate = self;
-    cell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeRemindButton)];
+    cell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeLoading)];
     cell.task = task;
+    [cell setAvatarsURLs:@[]];
+    __weak TaskCell *weakCell = cell;
+    __weak Task *weakTask = task;
+
+    PFQuery *notificationQuery = [PFQuery queryWithClassName:[Notification parseClassName]];
+    [notificationQuery whereKey:@"sender" equalTo:[PFUser currentUser]];
+    [notificationQuery whereKey:@"receiver" equalTo:task.creator];
+    [notificationQuery whereKey:@"task" equalTo:task];
+    [notificationQuery whereKey:@"type" equalTo:@(NotificationTypePing)];
+    [notificationQuery whereKey:@"createdAt" greaterThan:[NSDate dateWithTimeIntervalSinceNow:- 60 * 60]];
+    [notificationQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+        if (!error && weakCell.task == weakTask) {
+            if (objects.count) {
+                weakCell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeRemindStatus)];
+                [weakCell reloadItems];
+            } else {
+                weakCell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeRemindButton)];
+                [weakCell reloadItems];
+            }
+        }
+    }];
     
     [[task.asigned query] findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (!error) {
+        if (!error && weakCell.task == weakTask) {
             NSMutableArray *urls = [NSMutableArray new];
             for (PFUser *user in objects) {
                 [urls addObject:user.profilePictureURL];
@@ -123,13 +144,55 @@
 
 - (void)taskCell:(TaskCell *)taskCell didSelectItemAtIndex:(NSInteger)index
 {
+    taskCell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeLoading)];
+    [taskCell reloadItems];
     NSIndexPath *indexPath = [self.tableView indexPathForCell:taskCell];
     Task *task = self.tasks[indexPath.row];
-    
-    // Send push notification to query
-    PFQuery *pushQuery = [PFInstallation query];
-    [pushQuery whereKey:@"user" equalTo:task.creator];
-    [PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:@"Move on!"];
+
+    __weak FriendsJobsVC *weakSelf = self;
+    __weak TaskCell *weakCell = taskCell;
+
+    PFQuery *notificationQuery = [PFQuery queryWithClassName:[Notification parseClassName]];
+    [notificationQuery whereKey:@"sender" equalTo:[PFUser currentUser]];
+    [notificationQuery whereKey:@"receiver" equalTo:task.creator];
+    [notificationQuery whereKey:@"task" equalTo:task];
+    [notificationQuery whereKey:@"type" equalTo:@(NotificationTypePing)];
+    [notificationQuery whereKey:@"createdAt" greaterThan:[NSDate dateWithTimeIntervalSinceNow:- 60 * 60]];
+    [notificationQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+        if (!error) {
+            if (!objects.count) {
+                Notification *notification = [Notification new];
+                notification.type = @(NotificationTypePing);
+                notification.isRead = @(NO);
+                notification.sender = [PFUser currentUser];
+                notification.task = task;
+                notification.receiver = task.creator;
+                [notification save];
+
+                PFQuery *pushQuery = [PFInstallation query];
+                [pushQuery whereKey:@"user" equalTo:task.creator];
+                PFUser *currentUser = [PFUser currentUser];
+                NSString *message = currentUser.profileName ? [NSString stringWithFormat:@"%@: Move on!", currentUser.profileName] : @"Move on!";
+                [PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
+
+                dispatch_async(dispatch_get_main_queue(), ^(){
+                    if (weakCell && weakCell.task == task) {
+                        [weakSelf reloadCell:weakCell];
+                    }
+                });
+            }
+        }
+    }];
+}
+
+- (void)reloadCell:(UITableViewCell *)cell
+{
+    if (cell) {
+        NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+        if (indexPath) {
+            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        }
+    }
 }
 
 @end

@@ -10,4 +10,16 @@
 
 @implementation Notification
 
+@dynamic type;
+@dynamic isRead;
+@dynamic createdAt;
+@dynamic sender;
+@dynamic receiver;
+@dynamic task;
+
++ (NSString *)parseClassName
+{
+    return @"Notification";
+}
+
 @end

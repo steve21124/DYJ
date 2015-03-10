@@ -7,7 +7,7 @@
 //
 
 #import <Parse/Parse.h>
-#import "User.h"
+#import "PFUser+DYJ.h"
 
 typedef NS_ENUM(NSUInteger, TaskStatus) {
     TaskStatusDefault,

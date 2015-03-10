@@ -1,14 +1,14 @@
 //
-//  User.m
+//  PFUser+DYJ.m
 //  DYJ
 //
-//  Created by Timur Bernikowich on 18.10.14.
-//  Copyright (c) 2014 Timur Bernikowich. All rights reserved.
+//  Created by Timur Bernikowich on 10.03.15.
+//  Copyright (c) 2015 Timur Bernikowich. All rights reserved.
 //
 
-#import "User.h"
+#import "PFUser+DYJ.h"
 
-@implementation PFUser (User)
+@implementation PFUser (DYJ)
 
 #pragma mark - Balance
 

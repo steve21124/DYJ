@@ -9,6 +9,7 @@
 #import "AddJobVC.h"
 #import "Categories.h"
 #import "Task.h"
+#import "Notification.h"
 #import "InputCell.h"
 #import "InfoCell.h"
 #import "FriendsListVC.h"
@@ -193,9 +194,25 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
     if (localUser.balance > newTask.reward) {
         [newTask save];
         localUser.balance = @([localUser.balance integerValue] - [newTask.reward integerValue]);
-        [localUser save]; 
+        [localUser save];
+
+        for (PFUser *friend in self.taskDictionary[TaskFriendsKey]) {
+            Notification *notification = [Notification new];
+            notification.type = @(NotificationTypeNewTask);
+            notification.isRead = @(NO);
+            notification.sender = [PFUser currentUser];
+            notification.task = newTask;
+            notification.receiver = friend;
+            [notification saveInBackground];
+        }
+
+        PFQuery *pushQuery = [PFInstallation query];
+        [pushQuery whereKey:@"user" containedIn:self.taskDictionary[TaskFriendsKey]];
+        PFUser *currentUser = [PFUser currentUser];
+        NSString *message = currentUser.profileName ? [NSString stringWithFormat:@"%@: Help me!", currentUser.profileName] : @"Your friend need help!";
+        [PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
     }
-    
+
     if (self.delegate) {
         [self.delegate addJobVCDidFinish:self];
     }

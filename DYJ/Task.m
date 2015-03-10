@@ -7,7 +7,6 @@
 //
 
 #import "Task.h"
-#import <PFObject+Subclass.h>
 
 @implementation Task
 

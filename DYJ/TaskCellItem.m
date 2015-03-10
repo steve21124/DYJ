@@ -112,6 +112,24 @@
             [self addSubview:titleLabel];
             break;
         }
+        case TaskCellItemTypeRemindStatus: {
+            UILabel *actionLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 8, self.width, 22)];
+            actionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+            actionLabel.font = [UIFont fontWithName:@"HelveticaNeueCyr-Medium" size:18];
+            actionLabel.textColor = [UIColor colorWithColorCode:@"929292"];
+            actionLabel.textAlignment = NSTextAlignmentCenter;
+            actionLabel.text = @"Good";
+            [self addSubview:actionLabel];
+            UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 29, self.width, 12)];
+            titleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+            titleLabel.font = [UIFont fontWithName:@"HelveticaNeueCyr-Medium" size:10];
+            titleLabel.textColor = [UIColor colorWithColorCode:@"929292"];
+            titleLabel.textAlignment = NSTextAlignmentCenter;
+            titleLabel.text = @"REMIND";
+            titleLabel.alpha = 0.6;
+            [self addSubview:titleLabel];
+            break;
+        }
         case TaskCellItemTypeTaskStatusButton: {
             self.defaultBackgroundColor = [UIColor colorWithColorCode:@"73BE20"];
             self.highlightedBackgroundColor = [UIColor colorWithColorCode:@"467C0B"];

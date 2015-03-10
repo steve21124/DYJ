@@ -27,5 +27,6 @@
 - (void)setAvatarsURLs:(NSArray *)avatars;
 
 + (CGFloat)heightWithTitle:(NSString *)title width:(CGFloat)width;
+- (void)reloadItems;
 
 @end

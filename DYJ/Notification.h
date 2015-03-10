@@ -7,9 +7,23 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Task.h"
 
-@interface Notification : NSObject
+typedef NS_ENUM(NSUInteger, NotificationType) {
+    NotificationTypeNewTask,
+    NotificationTypePing,
+    NotificationTypesCount
+};
 
-@property NSString *text;
+@interface Notification : PFObject <PFSubclassing>
+
+@property (nonatomic) NSNumber *type;
+@property (nonatomic) NSNumber *isRead;
+@property (nonatomic) NSDate *createdAt;
+@property (nonatomic) PFUser *sender;
+@property (nonatomic) PFUser *receiver;
+@property (nonatomic) Task *task;
+
++ (NSString *)parseClassName;
 
 @end

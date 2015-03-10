@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Notification.h"
-#import "User.h"
+#import "PFUser+DYJ.h"
 #import "Task.h"
 
 extern NSString *const HelperDidUpdateLoginStatusNotification;
