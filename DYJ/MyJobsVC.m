@@ -140,9 +140,13 @@
     cell.delegate = self;
     cell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeTaskStatusButton)];
     cell.task = task;
+    [cell setAvatarsURLs:@[]];
+
+    __weak TaskCell *weakCell = cell;
+    __weak Task *weakTask = task;
     
     [[task.asigned query] findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (!error) {
+        if (!error && weakCell.task == weakTask) {
             NSMutableArray *urls = [NSMutableArray new];
             for (PFUser *user in objects) {
                 [urls addObject:user.profilePictureURL];
