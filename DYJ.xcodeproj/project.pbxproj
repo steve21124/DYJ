@@ -25,7 +25,6 @@
 		B032D32819E88C6000D9D5A4 /* Categories.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D32719E88C6000D9D5A4 /* Categories.m */; };
 		B032D33219E8F5C000D9D5A4 /* TabBarVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D33119E8F5C000D9D5A4 /* TabBarVC.m */; };
 		B032D33619E8F63E00D9D5A4 /* MyJobsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D33519E8F63E00D9D5A4 /* MyJobsVC.m */; };
-		B032D33A19E8F68100D9D5A4 /* JobCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D33919E8F68100D9D5A4 /* JobCell.m */; };
 		B032D34319E8F86100D9D5A4 /* FriendsJobsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D34219E8F86100D9D5A4 /* FriendsJobsVC.m */; };
 		B032D34619E8F87200D9D5A4 /* NotificationsVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D34519E8F87200D9D5A4 /* NotificationsVC.m */; };
 		B032D34919E8F88100D9D5A4 /* AddJobVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D34819E8F88100D9D5A4 /* AddJobVC.m */; };
@@ -35,9 +34,12 @@
 		B032D36219E9466600D9D5A4 /* Notification.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D36119E9466600D9D5A4 /* Notification.m */; };
 		B06D51CA1A06B48900063BFE /* FriendsListVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B06D51C91A06B48900063BFE /* FriendsListVC.m */; };
 		B06D51CE1A06B88D00063BFE /* BaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B06D51CD1A06B88D00063BFE /* BaseVC.m */; };
+		B0B47C141AB0D89D00ABCE1B /* NotificationView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0B47C131AB0D89D00ABCE1B /* NotificationView.m */; };
+		B0C6B6881AB18CA600C2BBCE /* ActionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B0C6B6871AB18CA600C2BBCE /* ActionButton.m */; };
 		B0CABD9919FD943A002C37FD /* InputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9819FD943A002C37FD /* InputCell.m */; };
 		B0CABD9C19FD9AD0002C37FD /* BaseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9B19FD9AD0002C37FD /* BaseCell.m */; };
 		B0CABD9F19FDA6DB002C37FD /* InfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9E19FDA6DB002C37FD /* InfoCell.m */; };
+		B0E6DA6C16EF1DB6001CD002 /* NotificationActionSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E6DA6B16EF1DB6001CD002 /* NotificationActionSelector.m */; };
 		B0E79BC21AAE4454000B9179 /* PFUser+DYJ.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E79BC11AAE4454000B9179 /* PFUser+DYJ.m */; };
 /* End PBXBuildFile section */
 
@@ -73,8 +75,6 @@
 		B032D33119E8F5C000D9D5A4 /* TabBarVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TabBarVC.m; sourceTree = "<group>"; };
 		B032D33419E8F63E00D9D5A4 /* MyJobsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyJobsVC.h; sourceTree = "<group>"; };
 		B032D33519E8F63E00D9D5A4 /* MyJobsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyJobsVC.m; sourceTree = "<group>"; };
-		B032D33819E8F68100D9D5A4 /* JobCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobCell.h; sourceTree = "<group>"; };
-		B032D33919E8F68100D9D5A4 /* JobCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JobCell.m; sourceTree = "<group>"; };
 		B032D34119E8F86100D9D5A4 /* FriendsJobsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FriendsJobsVC.h; sourceTree = "<group>"; };
 		B032D34219E8F86100D9D5A4 /* FriendsJobsVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = FriendsJobsVC.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B032D34419E8F87200D9D5A4 /* NotificationsVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationsVC.h; sourceTree = "<group>"; };
@@ -93,12 +93,18 @@
 		B06D51C91A06B48900063BFE /* FriendsListVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = FriendsListVC.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B06D51CC1A06B88D00063BFE /* BaseVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseVC.h; sourceTree = "<group>"; };
 		B06D51CD1A06B88D00063BFE /* BaseVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseVC.m; sourceTree = "<group>"; };
+		B0B47C121AB0D89D00ABCE1B /* NotificationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationView.h; sourceTree = "<group>"; };
+		B0B47C131AB0D89D00ABCE1B /* NotificationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationView.m; sourceTree = "<group>"; };
+		B0C6B6861AB18CA600C2BBCE /* ActionButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionButton.h; sourceTree = "<group>"; };
+		B0C6B6871AB18CA600C2BBCE /* ActionButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionButton.m; sourceTree = "<group>"; };
 		B0CABD9719FD943A002C37FD /* InputCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputCell.h; sourceTree = "<group>"; };
 		B0CABD9819FD943A002C37FD /* InputCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputCell.m; sourceTree = "<group>"; };
 		B0CABD9A19FD9AD0002C37FD /* BaseCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseCell.h; sourceTree = "<group>"; };
 		B0CABD9B19FD9AD0002C37FD /* BaseCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseCell.m; sourceTree = "<group>"; };
 		B0CABD9D19FDA6DB002C37FD /* InfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoCell.h; sourceTree = "<group>"; };
 		B0CABD9E19FDA6DB002C37FD /* InfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InfoCell.m; sourceTree = "<group>"; };
+		B0E6DA6A16EF1DB6001CD002 /* NotificationActionSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationActionSelector.h; sourceTree = "<group>"; };
+		B0E6DA6B16EF1DB6001CD002 /* NotificationActionSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationActionSelector.m; sourceTree = "<group>"; };
 		B0E79BC01AAE4454000B9179 /* PFUser+DYJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PFUser+DYJ.h"; sourceTree = "<group>"; };
 		B0E79BC11AAE4454000B9179 /* PFUser+DYJ.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PFUser+DYJ.m"; sourceTree = "<group>"; };
 		C9A57C83A310442AA2C49C09 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -133,13 +139,13 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		B00511CC1A11645000A61AA4 /* Views */ = {
+		B00511CC1A11645000A61AA4 /* Friends */ = {
 			isa = PBXGroup;
 			children = (
 				B00511CD1A11646E00A61AA4 /* FriendsView.h */,
 				B00511CE1A11646E00A61AA4 /* FriendsView.m */,
 			);
-			name = Views;
+			name = Friends;
 			sourceTree = "<group>";
 		};
 		B032D21A19E8570700D9D5A4 = {
@@ -164,6 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				B032D32919E8F54300D9D5A4 /* AppDelegate */,
+				B0B47C111AB0D7DE00ABCE1B /* Views */,
 				B032D32D19E8F58400D9D5A4 /* VCs */,
 				B032D35219E9011000D9D5A4 /* Model */,
 				B032D32A19E8F55D00D9D5A4 /* Storyboard */,
@@ -251,25 +258,21 @@
 		B032D33319E8F62000D9D5A4 /* MyJobs */ = {
 			isa = PBXGroup;
 			children = (
-				B00511CC1A11645000A61AA4 /* Views */,
-				B032D33719E8F66E00D9D5A4 /* Cells */,
 				B032D33419E8F63E00D9D5A4 /* MyJobsVC.h */,
 				B032D33519E8F63E00D9D5A4 /* MyJobsVC.m */,
 			);
 			name = MyJobs;
 			sourceTree = "<group>";
 		};
-		B032D33719E8F66E00D9D5A4 /* Cells */ = {
+		B032D33719E8F66E00D9D5A4 /* Tasks */ = {
 			isa = PBXGroup;
 			children = (
 				B008AF3D19F7C80700445922 /* TaskCell.h */,
 				B008AF3E19F7C80700445922 /* TaskCell.m */,
 				B008AF4019F7C8FC00445922 /* TaskCellItem.h */,
 				B008AF4119F7C8FC00445922 /* TaskCellItem.m */,
-				B032D33819E8F68100D9D5A4 /* JobCell.h */,
-				B032D33919E8F68100D9D5A4 /* JobCell.m */,
 			);
-			name = Cells;
+			name = Tasks;
 			sourceTree = "<group>";
 		};
 		B032D33B19E8F7B400D9D5A4 /* FriendsJobs */ = {
@@ -383,6 +386,29 @@
 				B06D51CD1A06B88D00063BFE /* BaseVC.m */,
 			);
 			name = BaseVC;
+			sourceTree = "<group>";
+		};
+		B0B47C111AB0D7DE00ABCE1B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B00511CC1A11645000A61AA4 /* Friends */,
+				B032D33719E8F66E00D9D5A4 /* Tasks */,
+				B0B47C151AB0D98500ABCE1B /* Notifications */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		B0B47C151AB0D98500ABCE1B /* Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				B0B47C121AB0D89D00ABCE1B /* NotificationView.h */,
+				B0B47C131AB0D89D00ABCE1B /* NotificationView.m */,
+				B0E6DA6A16EF1DB6001CD002 /* NotificationActionSelector.h */,
+				B0E6DA6B16EF1DB6001CD002 /* NotificationActionSelector.m */,
+				B0C6B6861AB18CA600C2BBCE /* ActionButton.h */,
+				B0C6B6871AB18CA600C2BBCE /* ActionButton.m */,
+			);
+			name = Notifications;
 			sourceTree = "<group>";
 		};
 		B0CABD9619FD8E81002C37FD /* Cells */ = {
@@ -508,18 +534,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				B06D51CA1A06B48900063BFE /* FriendsListVC.m in Sources */,
+				B0B47C141AB0D89D00ABCE1B /* NotificationView.m in Sources */,
 				B032D22F19E8570700D9D5A4 /* StartVC.m in Sources */,
 				B008AF4219F7C8FC00445922 /* TaskCellItem.m in Sources */,
 				B0CABD9919FD943A002C37FD /* InputCell.m in Sources */,
 				B02F048F19F2B6670034A1DE /* ProfileUpdater.m in Sources */,
 				B032D22C19E8570700D9D5A4 /* AppDelegate.m in Sources */,
+				B0E6DA6C16EF1DB6001CD002 /* NotificationActionSelector.m in Sources */,
 				B032D35119E8FE3E00D9D5A4 /* NavigationVC.m in Sources */,
 				B032D35819E9061000D9D5A4 /* FriendsUpdater.m in Sources */,
 				B008AF3F19F7C80700445922 /* TaskCell.m in Sources */,
 				B0E79BC21AAE4454000B9179 /* PFUser+DYJ.m in Sources */,
 				B0CABD9F19FDA6DB002C37FD /* InfoCell.m in Sources */,
-				B032D33A19E8F68100D9D5A4 /* JobCell.m in Sources */,
 				B00511CF1A11646E00A61AA4 /* FriendsView.m in Sources */,
+				B0C6B6881AB18CA600C2BBCE /* ActionButton.m in Sources */,
 				B032D32819E88C6000D9D5A4 /* Categories.m in Sources */,
 				B0CABD9C19FD9AD0002C37FD /* BaseCell.m in Sources */,
 				B032D34919E8F88100D9D5A4 /* AddJobVC.m in Sources */,

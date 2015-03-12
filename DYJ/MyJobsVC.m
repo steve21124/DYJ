@@ -7,7 +7,6 @@
 //
 
 #import "MyJobsVC.h"
-#import "JobCell.h"
 #import "TaskCell.h"
 #import "Categories.h"
 #import <Parse/Parse.h>
@@ -15,7 +14,7 @@
 #import "AddJobVC.h"
 #import "Task.h"
 
-@interface MyJobsVC () <UITableViewDataSource, UITableViewDelegate, JobCellDelegate, AddJobVCDelegate, TaskCellDelegate>
+@interface MyJobsVC () <UITableViewDataSource, UITableViewDelegate, AddJobVCDelegate, TaskCellDelegate>
 
 @property UIView *hintView;
 @property UILabel *instructions;

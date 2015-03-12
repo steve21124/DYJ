@@ -27,6 +27,7 @@
     // Parse initialization.
     [Parse setApplicationId:@"mZezLpbXT7O72w6I6meVZXaXYeXqHU1oEAGJc9YB" clientKey:@"Ss1MIRLN7Y7z6rDoEf5GodBSvARai3rJf03I9CrT"];
     [Task registerSubclass];
+    [Notification registerSubclass];
     PFUser *localUser = [PFUser currentUser];
     if (localUser) {
         PFInstallation *installation = [PFInstallation currentInstallation];
