@@ -41,7 +41,7 @@
     }
     
     CGFloat avatarSize = self.height;
-    CGFloat padding = 6;
+    CGFloat padding = 5.0;
     NSInteger maxAvatarsNumber = self.width / (avatarSize + padding);
     NSMutableArray *avatarsViews = [NSMutableArray new];
     __weak NSArray *weakAvatars = self.avatarsURLs;
@@ -55,8 +55,9 @@
             }
             NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:stringURL]];
             dispatch_async(dispatch_get_main_queue(), ^() {
-                UIImageView *avatarView = [[UIImageView alloc] initWithFrame:CGRectMake(i * padding, 0, avatarSize, avatarSize)];
+                UIImageView *avatarView = [[UIImageView alloc] initWithFrame:CGRectMake(i * (padding + avatarSize), 0, avatarSize, avatarSize)];
                 avatarView.layer.cornerRadius = avatarView.width / 2.0;
+                avatarView.contentMode = UIViewContentModeScaleAspectFill;
                 avatarView.clipsToBounds = YES;
                 avatarView.image = [UIImage imageWithData:data];
                 [self addSubview:avatarView];
