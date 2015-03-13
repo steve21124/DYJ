@@ -13,6 +13,7 @@
 #import <ParseFacebookUtils/PFFacebookUtils.h>
 #import "AddJobVC.h"
 #import "Task.h"
+#import "Notification.h"
 
 @interface MyJobsVC () <UITableViewDataSource, UITableViewDelegate, AddJobVCDelegate, TaskCellDelegate>
 
@@ -79,6 +80,7 @@
 
     // Load test data.
     [self loadTasks];
+    [self findOldTasks];
 }
 
 - (void)addButtonPressed:(id)sender
@@ -111,10 +113,57 @@
 
     PFQuery *taskQuery = [PFQuery queryWithClassName:[Task parseClassName]];
     [taskQuery whereKey:@"creator" equalTo:localUser];
+    [taskQuery whereKey:@"status" containedIn:@[@(TaskStatusDefault), @(TaskStatusFinished)]];
     [taskQuery orderByDescending:@"createdAt"];
     NSArray *tasks = [taskQuery findObjects];
 
     self.tasks = tasks;
+}
+
+- (void)findOldTasks
+{
+    PFUser *localUser = [PFUser currentUser];
+    if (!localUser) {
+        return;
+    }
+
+    PFQuery *taskWithNotificationQuery = [Notification query];
+    [taskWithNotificationQuery whereKey:@"type" equalTo:@(NotificationTypeTaskNoTimeLeft)];
+    [taskWithNotificationQuery selectKeys:@[@"task"]];
+    NSArray *notificationsOfType = [taskWithNotificationQuery findObjects];
+    NSMutableArray *tasksWithNotifications = [NSMutableArray new];
+    for (Notification *notification in notificationsOfType) {
+        [tasksWithNotifications addObject:notification.task];
+    }
+
+    PFQuery *taskQuery = [PFQuery queryWithClassName:[Task parseClassName]];
+    [taskQuery whereKey:@"creator" equalTo:localUser];
+    [taskQuery whereKey:@"expiration" lessThanOrEqualTo:[NSDate date]];
+    [taskQuery whereKey:@"objectId" doesNotMatchKey:@"task" inQuery:taskWithNotificationQuery];
+    [taskQuery orderByDescending:@"createdAt"];
+    [taskQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        NSMutableArray *tasks = [objects mutableCopy];
+        for (Task *task in objects) {
+            for (Task *taskWithNotification in tasksWithNotifications) {
+                if ([task.objectId isEqualToString:taskWithNotification.objectId]) {
+                    [tasks removeObject:task];
+                }
+            }
+        }
+        if (!error && tasks.count) {
+            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(){
+                for (Task *task in tasks) {
+                    Notification *notification = [Notification new];
+                    notification.type = @(NotificationTypeTaskNoTimeLeft);
+                    notification.isRead = @(NO);
+                    notification.sender = [PFUser currentUser];
+                    notification.task = task;
+                    notification.receiver = [PFUser currentUser];
+                    [notification save];
+                }
+            });
+        }
+    }];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

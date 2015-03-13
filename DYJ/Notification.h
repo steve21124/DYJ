@@ -12,6 +12,8 @@
 typedef NS_ENUM(NSUInteger, NotificationType) {
     NotificationTypeNewTask,
     NotificationTypePing,
+    NotificationTypeTaskNoTimeLeft,
+    NotificationTypeReward,
     NotificationTypesCount
 };
 

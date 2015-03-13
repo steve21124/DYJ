@@ -182,6 +182,7 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
     newTask.title = self.taskDictionary[TaskTitleKey];
     newTask.taskDescription = self.taskDictionary[TaskDescriptionKey];
     newTask.creator = [PFUser currentUser];
+    newTask.status = @(TaskStatusDefault);
     newTask.expiration = self.taskDictionary[TaskDateKey];
     newTask.reward = self.taskDictionary[TaskBidKey];
     for (PFUser *user in self.taskDictionary[TaskFriendsKey]) {

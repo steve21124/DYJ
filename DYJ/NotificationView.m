@@ -109,21 +109,26 @@
     NSMutableParagraphStyle *style = [NSMutableParagraphStyle new];
     style.lineSpacing = 5.0;
     style.alignment = NSTextAlignmentCenter;
-    NSAttributedString *body = [[NSAttributedString alloc] initWithString:self.notification.task.title attributes:@{NSParagraphStyleAttributeName:style}];
+    NSString *title = self.notification.task.title ? self.notification.task.title : @"";
+    NSAttributedString *body = [[NSAttributedString alloc] initWithString:title attributes:@{NSParagraphStyleAttributeName:style}];
     self.bodyLabel.attributedText = body;
 
-    __weak NotificationView *weakSelf = self;
-    __weak Notification *weakNotification = self.notification;
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^() {
-        NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:weakNotification.sender.profilePictureURL]];
-        UIImage *image = [UIImage imageWithData:data];
-        dispatch_async(dispatch_get_main_queue(), ^() {
-            if (image && weakNotification && weakSelf.notification == weakNotification) {
-                weakSelf.avatarView.image = image;
-            }
+    if ([self.notification.type integerValue] == NotificationTypePing || [self.notification.type integerValue] == NotificationTypeNewTask) {
+        __weak NotificationView *weakSelf = self;
+        __weak Notification *weakNotification = self.notification;
+        weakSelf.avatarView.image = nil;
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^() {
+            NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:weakNotification.sender.profilePictureURL]];
+            UIImage *image = [UIImage imageWithData:data];
+            dispatch_async(dispatch_get_main_queue(), ^() {
+                if (image && weakNotification && weakSelf.notification == weakNotification) {
+                    weakSelf.avatarView.image = image;
+                }
+            });
         });
-
-    });
+    } else if ([self.notification.type integerValue] == NotificationTypeTaskNoTimeLeft) {
+        self.avatarView.image = [UIImage imageNamed:@"WarningIcon"];
+    }
 }
 
 - (void)reloadItems
@@ -235,6 +240,22 @@
         UIFont *textFont = [UIFont fontWithName:@"HelveticaNeueCyr-Light" size:15.0];
         NSDictionary *textAttributes = @{NSFontAttributeName:textFont};
         NSAttributedString *reminds = [[NSAttributedString alloc] initWithString:@" asked you to help with:" attributes:textAttributes];
+        [header appendAttributedString:reminds];
+    } else if ([notification.type integerValue] == NotificationTypeTaskNoTimeLeft) {
+        UIFont *textFont = [UIFont fontWithName:@"HelveticaNeueCyr-Light" size:15.0];
+        NSDictionary *textAttributes = @{NSFontAttributeName:textFont};
+        NSString *question = @"Have you successfully finished your task?";
+        header = [[NSMutableAttributedString alloc] initWithString:question attributes:textAttributes];
+    } else  if ([notification.type integerValue] == NotificationTypeReward) {
+        NSString *sender = notification.sender.profileName;
+        sender = sender ? sender : @"Friend";
+        UIFont *nameFont = [UIFont fontWithName:@"HelveticaNeueCyr-Medium" size:15.0];
+        NSDictionary *nameAttributes = @{NSFontAttributeName:nameFont};
+        header = [[NSMutableAttributedString alloc] initWithString:sender attributes:nameAttributes];
+
+        UIFont *textFont = [UIFont fontWithName:@"HelveticaNeueCyr-Light" size:15.0];
+        NSDictionary *textAttributes = @{NSFontAttributeName:textFont};
+        NSAttributedString *reminds = [[NSAttributedString alloc] initWithString:@" gave motives to you for help with task (test text):" attributes:textAttributes];
         [header appendAttributedString:reminds];
     }
 

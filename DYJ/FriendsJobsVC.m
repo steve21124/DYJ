@@ -73,6 +73,8 @@
     
     PFQuery *taskQuery = [PFQuery queryWithClassName:[Task parseClassName]];
     [taskQuery whereKey:@"asigned" equalTo:[PFUser currentUser]];
+    [taskQuery whereKey:@"status" containedIn:@[@(TaskStatusDefault)]];
+    [taskQuery whereKey:@"expiration" greaterThan:[NSDate date]];
     [taskQuery orderByDescending:@"createdAt"];
     NSArray *tasks = [taskQuery findObjects];
 //    
