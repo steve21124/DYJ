@@ -27,4 +27,6 @@ typedef NS_ENUM(NSUInteger, TaskCellItemType) {
 @property (nonatomic) TaskCellItemType type;
 @property (nonatomic) Task *task;
 
++ (NSAttributedString *)motivesStringWithMotives:(NSNumber *)motives;
+
 @end

@@ -8,6 +8,7 @@
 
 #import "ProfileCell.h"
 #import "Categories.h"
+@import QuartzCore;
 
 @implementation ProfileCell
 
@@ -25,6 +26,15 @@
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     self.backgroundColor = [UIColor clearColor];
 
+    // Avatar.
+    self.avatar = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 30.0, 75.0, 75.0)];
+    self.avatar.centerX = self.width / 2.0;
+    self.avatar.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleBottomMargin;
+    self.avatar.contentMode = UIViewContentModeScaleAspectFill;
+    self.avatar.layer.cornerRadius = self.avatar.width / 2.0;
+    self.avatar.clipsToBounds = YES;
+    [self addSubview:self.avatar];
+
     // Name.
     self.name = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 110.0, self.width, 22.0)];
     self.name.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
@@ -34,12 +44,17 @@
     [self addSubview:self.name];
 
     // Balance.
-    self.balance = 
+    self.balance = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 140.0, self.width, 20.0)];
+    self.balance.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
+    self.balance.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:16.0];
+    self.balance.textAlignment = NSTextAlignmentCenter;
+    self.balance.textColor = [UIColor colorWithColorCode:@"FFB838"];
+    [self addSubview:self.balance];
 }
 
 + (CGFloat)height
 {
-    return 190.0;
+    return 186.0;
 }
 
 @end

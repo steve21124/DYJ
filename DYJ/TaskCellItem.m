@@ -59,19 +59,20 @@
             break;
         }
         case TaskCellItemTypeTimeLeft: {
+            BOOL isFinished = self.task.finishedAt;
             UILabel *timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 9, self.width, 20)];
             timeLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
             timeLabel.font = [UIFont fontWithName:@"HelveticaNeueCyr-Medium" size:16];
-            timeLabel.textColor = [UIColor colorWithColorCode:@"D0021B"];
+            timeLabel.textColor = isFinished ? [UIColor colorWithColorCode:@"BEBEBE"] : [UIColor colorWithColorCode:@"D0021B"];
             timeLabel.textAlignment = NSTextAlignmentCenter;
-            timeLabel.text = [self timeLeftToDate:self.task.expiration];
+            timeLabel.text = isFinished ? [self finishDateString:self.task.finishedAt] : [self timeLeftToDate:self.task.expiration];
             [self addSubview:timeLabel];
             UILabel *leftLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 29, self.width, 12)];
             leftLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
             leftLabel.font = [UIFont fontWithName:@"HelveticaNeueCyr-Medium" size:10];
             leftLabel.textColor = [UIColor colorWithColorCode:@"979797"];
             leftLabel.textAlignment = NSTextAlignmentCenter;
-            leftLabel.text = @"LEFT";
+            leftLabel.text = isFinished ? @"DATE" : @"LEFT";
             [self addSubview:leftLabel];
             break;
         }
@@ -80,7 +81,7 @@
             motivesLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
             motivesLabel.textColor = [UIColor colorWithColorCode:@"FFB838"];
             motivesLabel.textAlignment = NSTextAlignmentCenter;
-            motivesLabel.attributedText = [self motivesStringWithMotives:self.task.reward];
+            motivesLabel.attributedText = [TaskCellItem motivesStringWithMotives:self.task.reward];
             [self addSubview:motivesLabel];
             UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 29, self.width, 12)];
             titleLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -142,6 +143,16 @@
             actionLabel.text = @"Finished?";
             [self addSubview:actionLabel];
             break;
+        }
+        case TaskCellItemTypeTaskStatus: {
+            BOOL done = ([self.task.status integerValue] == TaskStatusDone);
+            UILabel *actionLabel = [[UILabel alloc] initWithFrame:self.bounds];
+            actionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+            actionLabel.font = [UIFont fontWithName:@"HelveticaNeueCyr-Medium" size:18];
+            actionLabel.textColor = done ? [UIColor colorWithColorCode:@"467C0B"] : [UIColor colorWithColorCode:@"D0021B"];
+            actionLabel.textAlignment = NSTextAlignmentCenter;
+            actionLabel.text = done ? @"Done" : @"Fail";
+            [self addSubview:actionLabel];
         }
         default:
             break;
@@ -230,7 +241,14 @@
     return timeLeftString;
 }
 
-- (NSAttributedString *)motivesStringWithMotives:(NSNumber *)motives
+- (NSString *)finishDateString:(NSDate *)date
+{
+    NSDateFormatter *dateFormatter = [NSDateFormatter new];
+    dateFormatter.dateFormat = @"dd.MM.yy";
+    return [dateFormatter stringFromDate:date];
+}
+
++ (NSAttributedString *)motivesStringWithMotives:(NSNumber *)motives
 {
     NSMutableAttributedString *motivesString;
     
