@@ -36,6 +36,8 @@
 		B06D51CE1A06B88D00063BFE /* BaseVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B06D51CD1A06B88D00063BFE /* BaseVC.m */; };
 		B0B47C141AB0D89D00ABCE1B /* NotificationView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0B47C131AB0D89D00ABCE1B /* NotificationView.m */; };
 		B0C6B6881AB18CA600C2BBCE /* ActionButton.m in Sources */ = {isa = PBXBuildFile; fileRef = B0C6B6871AB18CA600C2BBCE /* ActionButton.m */; };
+		B0C6B68C1AB37E8300C2BBCE /* ProfileVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B0C6B68B1AB37E8300C2BBCE /* ProfileVC.m */; };
+		B0C6B6901AB3824A00C2BBCE /* ProfileCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0C6B68F1AB3824A00C2BBCE /* ProfileCell.m */; };
 		B0CABD9919FD943A002C37FD /* InputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9819FD943A002C37FD /* InputCell.m */; };
 		B0CABD9C19FD9AD0002C37FD /* BaseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9B19FD9AD0002C37FD /* BaseCell.m */; };
 		B0CABD9F19FDA6DB002C37FD /* InfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9E19FDA6DB002C37FD /* InfoCell.m */; };
@@ -97,6 +99,10 @@
 		B0B47C131AB0D89D00ABCE1B /* NotificationView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationView.m; sourceTree = "<group>"; };
 		B0C6B6861AB18CA600C2BBCE /* ActionButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionButton.h; sourceTree = "<group>"; };
 		B0C6B6871AB18CA600C2BBCE /* ActionButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ActionButton.m; sourceTree = "<group>"; };
+		B0C6B68A1AB37E8300C2BBCE /* ProfileVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileVC.h; sourceTree = "<group>"; };
+		B0C6B68B1AB37E8300C2BBCE /* ProfileVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileVC.m; sourceTree = "<group>"; };
+		B0C6B68E1AB3824A00C2BBCE /* ProfileCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileCell.h; sourceTree = "<group>"; };
+		B0C6B68F1AB3824A00C2BBCE /* ProfileCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileCell.m; sourceTree = "<group>"; };
 		B0CABD9719FD943A002C37FD /* InputCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InputCell.h; sourceTree = "<group>"; };
 		B0CABD9819FD943A002C37FD /* InputCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InputCell.m; sourceTree = "<group>"; };
 		B0CABD9A19FD9AD0002C37FD /* BaseCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseCell.h; sourceTree = "<group>"; };
@@ -306,11 +312,12 @@
 		B032D34019E8F80B00D9D5A4 /* MainVCs */ = {
 			isa = PBXGroup;
 			children = (
-				B06D51C71A06B44400063BFE /* FriendsListVC */,
+				B06D51C71A06B44400063BFE /* FriendsList */,
 				B032D33319E8F62000D9D5A4 /* MyJobs */,
 				B032D33F19E8F7F600D9D5A4 /* AddJob */,
 				B032D33B19E8F7B400D9D5A4 /* FriendsJobs */,
 				B032D33E19E8F7E300D9D5A4 /* Notifications */,
+				B0C6B6891AB37E3200C2BBCE /* Profile */,
 			);
 			name = MainVCs;
 			sourceTree = "<group>";
@@ -370,13 +377,13 @@
 			name = Classes;
 			sourceTree = "<group>";
 		};
-		B06D51C71A06B44400063BFE /* FriendsListVC */ = {
+		B06D51C71A06B44400063BFE /* FriendsList */ = {
 			isa = PBXGroup;
 			children = (
 				B06D51C81A06B48900063BFE /* FriendsListVC.h */,
 				B06D51C91A06B48900063BFE /* FriendsListVC.m */,
 			);
-			name = FriendsListVC;
+			name = FriendsList;
 			sourceTree = "<group>";
 		};
 		B06D51CB1A06B88000063BFE /* BaseVC */ = {
@@ -409,6 +416,25 @@
 				B0C6B6871AB18CA600C2BBCE /* ActionButton.m */,
 			);
 			name = Notifications;
+			sourceTree = "<group>";
+		};
+		B0C6B6891AB37E3200C2BBCE /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				B0C6B68D1AB3823100C2BBCE /* Cells */,
+				B0C6B68A1AB37E8300C2BBCE /* ProfileVC.h */,
+				B0C6B68B1AB37E8300C2BBCE /* ProfileVC.m */,
+			);
+			name = Profile;
+			sourceTree = "<group>";
+		};
+		B0C6B68D1AB3823100C2BBCE /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				B0C6B68E1AB3824A00C2BBCE /* ProfileCell.h */,
+				B0C6B68F1AB3824A00C2BBCE /* ProfileCell.m */,
+			);
+			name = Cells;
 			sourceTree = "<group>";
 		};
 		B0CABD9619FD8E81002C37FD /* Cells */ = {
@@ -533,6 +559,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B0C6B68C1AB37E8300C2BBCE /* ProfileVC.m in Sources */,
 				B06D51CA1A06B48900063BFE /* FriendsListVC.m in Sources */,
 				B0B47C141AB0D89D00ABCE1B /* NotificationView.m in Sources */,
 				B032D22F19E8570700D9D5A4 /* StartVC.m in Sources */,
@@ -558,6 +585,7 @@
 				B032D33619E8F63E00D9D5A4 /* MyJobsVC.m in Sources */,
 				B032D22919E8570700D9D5A4 /* main.m in Sources */,
 				B032D36219E9466600D9D5A4 /* Notification.m in Sources */,
+				B0C6B6901AB3824A00C2BBCE /* ProfileCell.m in Sources */,
 				B008AF3C19F7C7DF00445922 /* Task.m in Sources */,
 				B032D35519E9012400D9D5A4 /* Helper.m in Sources */,
 			);
