@@ -14,6 +14,9 @@
 #import "InfoCell.h"
 #import "FriendsListVC.h"
 
+#define TAG_NAME 1
+#define TAG_DESCRIPTION 2
+
 NSString *const TaskTitleKey = @"TaskTitleKey";
 NSString *const TaskDescriptionKey = @"TaskDescriptionKey";
 NSString *const TaskDateKey = @"TaskDateKey";
@@ -44,7 +47,7 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
     VCSectionBidsRowsCount
 };
 
-@interface AddJobVC () <UITableViewDataSource, UITableViewDelegate, InputCellDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FriendsListVCDelegate>
+@interface AddJobVC () <UITableViewDataSource, UITableViewDelegate, InputCellDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FriendsListVCDelegate, UITextFieldDelegate>
 
 @property NSMutableDictionary *taskDictionary;
 @property UITableView *tableView;
@@ -54,6 +57,9 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
 @property (nonatomic) CGFloat keyboardPadding;
 @property (nonatomic) CGFloat datePickerPadding;
 @property (nonatomic) CGFloat motivesPickerPadding;
+@property UITextField *textField;
+@property UIToolbar *textFieldToolbar;
+@property UIView *textFieldTopView;
 
 @end
 
@@ -94,7 +100,24 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"TestCell"];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
-
+    
+    // Text field top view.
+    self.textFieldTopView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, SCREEN_BOUNDS.size.width, 44.0)];
+    self.textFieldTopView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewContentModeBottom;
+    self.textFieldTopView.backgroundColor = [UIColor whiteColor];
+    
+    UIView *separatorTop = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.textFieldTopView.width, PIXEL)];
+    separatorTop.backgroundColor = [UIColor colorWithColorCode:@"cccccc"];
+    [self.textFieldTopView addSubview:separatorTop];
+    
+    // Done text field button.
+    UIButton *doneTextFieldButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [doneTextFieldButton setTitle:@"Done" forState:UIControlStateNormal];
+    [doneTextFieldButton setTitleColor:[UIColor colorWithColorCode:@"FF6C2F"] forState:UIControlStateNormal];
+    doneTextFieldButton.frame = CGRectMake(self.textFieldTopView.width - 100, 0, 100, 44);
+    [doneTextFieldButton addTarget:self action:@selector(doneTextFieldButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.textFieldTopView addSubview:doneTextFieldButton];
+    
     // Subscribe.
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardMoved:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardMoved:) name:UIKeyboardWillHideNotification object:nil];
@@ -103,6 +126,11 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)doneTextFieldButtonPressed:(id)sender
+{
+    [self.textField resignFirstResponder];
 }
 
 - (void)keyboardMoved:(NSNotification *)notification
@@ -298,10 +326,18 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
                 case VCSectionTitlesRowName:
                     cell.textField.placeholder = @"Your task title";
                     cell.textField.returnKeyType = UIReturnKeyNext;
+                    cell.textField.delegate = self;
+                    cell.textField.autocorrectionType = UITextAutocorrectionTypeNo;
+                    cell.textField.inputAccessoryView = self.textFieldTopView;
+                    cell.textField.tag = TAG_NAME;
                     break;
                 case VCSectionTitlesRowDescription:
                     cell.textField.placeholder = @"Describe your task here";
                     cell.textField.returnKeyType = UIReturnKeyNext;
+                    cell.textField.delegate = self;
+                    cell.textField.autocorrectionType = UITextAutocorrectionTypeNo;
+                    cell.textField.inputAccessoryView = self.textFieldTopView;
+                    cell.textField.tag = TAG_DESCRIPTION;
                     break;
             }
             cell.separatorTop.hidden = (indexPath.row != 0);
@@ -402,10 +438,14 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
         }
         case VCSectionDate:
         {
+            if (self.motivesPicker) {
+                [self motivesPickerDoneButtonPressed:nil];
+            }
             if (self.datePicker) {
                 [self datePickerDoneButtonPressed:nil];
                 return;
             }
+            [self.textField resignFirstResponder];
 
             UIDatePicker *datePicker = [UIDatePicker new];
             datePicker.backgroundColor = [UIColor whiteColor];
@@ -450,10 +490,14 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
         }
         case VCSectionBids:
         {
+            if (self.datePicker) {
+                [self datePickerDoneButtonPressed:nil];
+            }
             if (self.motivesPicker) {
                 [self motivesPickerDoneButtonPressed:nil];
                 return;
             }
+            [self.textField resignFirstResponder];
 
             UIPickerView *bidsPicker = [UIPickerView new];
             bidsPicker.backgroundColor = [UIColor whiteColor];
@@ -497,6 +541,13 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
         }
         case VCSectionFriends:
         {
+            if (self.datePicker) {
+                [self datePickerDoneButtonPressed:nil];
+            }
+            if (self.motivesPicker) {
+                [self motivesPickerDoneButtonPressed:nil];
+            }
+            [self.textField resignFirstResponder];
             NSArray *friends = self.taskDictionary[TaskFriendsKey];
             PFUser *friend;
             if (indexPath.row < [friends count]) {
@@ -621,6 +672,33 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
 {
     self.taskDictionary[TaskFriendsKey] = vc.asignedFriends;
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:VCSectionFriends] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+#pragma mark - UITextFieldDelegate
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    if (self.datePicker) {
+        [self datePickerDoneButtonPressed:nil];
+    }
+    if (self.motivesPicker) {
+        [self motivesPickerDoneButtonPressed:nil];
+    }
+    self.textField = textField;
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    if (textField.tag == TAG_NAME) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:VCSectionTitlesRowDescription inSection:VCSectionTitles];
+        InputCell *cell = (InputCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+        [cell.textField becomeFirstResponder];
+    } else if (textField.tag == TAG_DESCRIPTION) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:VCSectionDateRowExpiration inSection:VCSectionDate];	
+        [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+    }
+    [textField resignFirstResponder];
+    return YES;
 }
 
 @end
