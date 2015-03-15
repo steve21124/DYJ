@@ -14,6 +14,7 @@
 
 - (void)inputCellDidChangeText:(InputCell *)inputCell;
 - (void)inputCellPressedReturn:(InputCell *)inputCell;
+- (void)inputCellDidBeginEditing:(InputCell *)inputCell;
 
 @end
 

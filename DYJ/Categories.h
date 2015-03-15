@@ -16,6 +16,7 @@
 
 #define KEYBOARD_HEIGHT 216.0
 #define PIXEL 1.0 / ([UIScreen mainScreen].scale)
+#define SCREEN_BOUNDS ([[UIScreen mainScreen] bounds])
 
 #define L(str) NSLocalizedString(str, nil)
 #define LOG(obj) NSLog(@"%@", obj)
