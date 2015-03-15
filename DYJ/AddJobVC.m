@@ -13,9 +13,7 @@
 #import "InputCell.h"
 #import "InfoCell.h"
 #import "FriendsListVC.h"
-
-#define TAG_NAME 1
-#define TAG_DESCRIPTION 2
+#import <UIAlertView+Blocks.h>
 
 NSString *const TaskTitleKey = @"TaskTitleKey";
 NSString *const TaskDescriptionKey = @"TaskDescriptionKey";
@@ -47,7 +45,7 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
     VCSectionBidsRowsCount
 };
 
-@interface AddJobVC () <UITableViewDataSource, UITableViewDelegate, InputCellDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FriendsListVCDelegate, UITextFieldDelegate>
+@interface AddJobVC () <UITableViewDataSource, UITableViewDelegate, InputCellDelegate, UIPickerViewDataSource, UIPickerViewDelegate, FriendsListVCDelegate>
 
 @property NSMutableDictionary *taskDictionary;
 @property UITableView *tableView;
@@ -202,6 +200,7 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
 - (void)addButtonPressed:(id)sender
 {
     if (![self dataAreCorrect]) {
+        [self showAlertViewForAddButton];
         return;
     }
 
@@ -245,6 +244,36 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
     if (self.delegate) {
         [self.delegate addJobVCDidFinish:self];
     }
+}
+
+- (void)showAlertViewForAddButton
+{
+    [UIAlertView showWithTitle:@"Warning" message:@"Enter all data please." cancelButtonTitle:@"OK" otherButtonTitles:nil tapBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+        if (![self.taskDictionary[TaskTitleKey] length]) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:VCSectionTitlesRowName inSection:VCSectionTitles];
+            InputCell *cell = (InputCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+            [cell.textField becomeFirstResponder];
+            [self resignFirstResponder];
+            return;
+        }
+        if (![self.taskDictionary[TaskDescriptionKey] length]) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:VCSectionTitlesRowDescription inSection:VCSectionTitles];
+            InputCell *cell = (InputCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+            [cell.textField becomeFirstResponder];
+            [self resignFirstResponder];
+            return;
+        }
+        if (!self.taskDictionary[TaskDateKey]) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:VCSectionDateRowExpiration inSection:VCSectionDate];
+            [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+            return;
+        }
+        if (!self.taskDictionary[TaskBidKey]) {
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:VCSectionBidsRowBids inSection:VCSectionBids];
+            [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+            return;
+        }
+    }];
 }
 
 #pragma mark - Table view
@@ -326,18 +355,14 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
                 case VCSectionTitlesRowName:
                     cell.textField.placeholder = @"Your task title";
                     cell.textField.returnKeyType = UIReturnKeyNext;
-                    cell.textField.delegate = self;
                     cell.textField.autocorrectionType = UITextAutocorrectionTypeNo;
                     cell.textField.inputAccessoryView = self.textFieldTopView;
-                    cell.textField.tag = TAG_NAME;
                     break;
                 case VCSectionTitlesRowDescription:
                     cell.textField.placeholder = @"Describe your task here";
                     cell.textField.returnKeyType = UIReturnKeyNext;
-                    cell.textField.delegate = self;
                     cell.textField.autocorrectionType = UITextAutocorrectionTypeNo;
                     cell.textField.inputAccessoryView = self.textFieldTopView;
-                    cell.textField.tag = TAG_DESCRIPTION;
                     break;
             }
             cell.separatorTop.hidden = (indexPath.row != 0);
@@ -574,6 +599,7 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
         [view removeFromSuperview];
         self.datePicker = nil;
     }];
+    [self updateAddButton];
 }
 
 - (void)datePickerChangedDate:(UIDatePicker *)sender
@@ -593,6 +619,7 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
         [view removeFromSuperview];
         self.motivesPicker = nil;
     }];
+    [self updateAddButton];
 }
 
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
@@ -637,6 +664,17 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
     [self updateAddButton];
 }
 
+- (void)inputCellDidBeginEditing:(InputCell *)inputCell
+{
+    if (self.datePicker) {
+        [self datePickerDoneButtonPressed:nil];
+    }
+    if (self.motivesPicker) {
+        [self motivesPickerDoneButtonPressed:nil];
+    }
+    self.textField = inputCell.textField;
+}
+
 - (void)inputCellPressedReturn:(InputCell *)inputCell
 {
     NSIndexPath *indexPath = [self.tableView indexPathForCell:inputCell];
@@ -650,6 +688,8 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
                     break;
                 }
                 case VCSectionTitlesRowDescription: {
+                    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:VCSectionDateRowExpiration inSection:VCSectionDate];
+                    [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
                     [inputCell.textField resignFirstResponder];
                     break;
                 }
@@ -672,33 +712,6 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
 {
     self.taskDictionary[TaskFriendsKey] = vc.asignedFriends;
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:VCSectionFriends] withRowAnimation:UITableViewRowAnimationAutomatic];
-}
-
-#pragma mark - UITextFieldDelegate
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField
-{
-    if (self.datePicker) {
-        [self datePickerDoneButtonPressed:nil];
-    }
-    if (self.motivesPicker) {
-        [self motivesPickerDoneButtonPressed:nil];
-    }
-    self.textField = textField;
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField
-{
-    if (textField.tag == TAG_NAME) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:VCSectionTitlesRowDescription inSection:VCSectionTitles];
-        InputCell *cell = (InputCell *)[self.tableView cellForRowAtIndexPath:indexPath];
-        [cell.textField becomeFirstResponder];
-    } else if (textField.tag == TAG_DESCRIPTION) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:VCSectionDateRowExpiration inSection:VCSectionDate];	
-        [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
-    }
-    [textField resignFirstResponder];
-    return YES;
 }
 
 @end

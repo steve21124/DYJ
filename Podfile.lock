@@ -28,12 +28,14 @@ PODS:
   - ParseFacebookUtils (1.6.1):
     - Facebook-iOS-SDK (~> 3.20)
     - Parse (~> 1.6.1)
+  - UIAlertView+Blocks (0.8.1)
 
 DEPENDENCIES:
   - AFNetworking (~> 2.4)
   - Facebook-iOS-SDK (~> 3.21)
   - Parse
   - ParseFacebookUtils
+  - UIAlertView+Blocks (~> 0.8)
 
 SPEC CHECKSUMS:
   AFNetworking: 0f54cb5d16ce38c1b76948faffb8d5fb705021c7
@@ -41,5 +43,6 @@ SPEC CHECKSUMS:
   Facebook-iOS-SDK: 0eda8ff7120aada0a9c5f98552f7625da6c3440a
   Parse: b0ec7666167e212edb6fc94f60ba170248bd1869
   ParseFacebookUtils: 7659dcda0fa59f67234ab7ba5a82a9b05073c59a
+  UIAlertView+Blocks: 0b749f1f7bd5131ff2233b30a406c1585a7171b2
 
-COCOAPODS: 0.35.0
+COCOAPODS: 0.36.0

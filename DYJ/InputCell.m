@@ -52,4 +52,11 @@
     return NO;
 }
 
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    if (self.delegate) {
+        [self.delegate inputCellDidBeginEditing:self];
+    }
+}
+
 @end
