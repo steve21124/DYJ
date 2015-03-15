@@ -204,46 +204,70 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
         return;
     }
 
-    // Create new task.
-    Task *newTask = [Task new];
-    newTask.title = self.taskDictionary[TaskTitleKey];
-    newTask.taskDescription = self.taskDictionary[TaskDescriptionKey];
-    newTask.creator = [PFUser currentUser];
-    newTask.status = @(TaskStatusDefault);
-    newTask.expiration = self.taskDictionary[TaskDateKey];
-    newTask.reward = self.taskDictionary[TaskBidKey];
-    for (PFUser *user in self.taskDictionary[TaskFriendsKey]) {
-        [newTask.asigned addObject:user];
-    }
-    
-    // Make a transaction.
-    PFUser *localUser = [PFUser currentUser];
-    [localUser fetch];
-    if (localUser.balance > newTask.reward) {
-        [newTask save];
-        localUser.balance = @([localUser.balance integerValue] - [newTask.reward integerValue]);
-        [localUser save];
+    // Show waiting alert.
+    UIAlertView *loadingAlertView = [UIAlertView showWithTitle:@"Loading" message:@"Please wait..." cancelButtonTitle:nil otherButtonTitles:nil tapBlock:nil];
 
-        for (PFUser *friend in self.taskDictionary[TaskFriendsKey]) {
-            Notification *notification = [Notification new];
-            notification.type = @(NotificationTypeNewTask);
-            notification.isRead = @(NO);
-            notification.sender = [PFUser currentUser];
-            notification.task = newTask;
-            notification.receiver = friend;
-            [notification saveInBackground];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^() {
+        // Create new task.
+        Task *newTask = [Task new];
+        newTask.title = self.taskDictionary[TaskTitleKey];
+        newTask.taskDescription = self.taskDictionary[TaskDescriptionKey];
+        newTask.creator = [PFUser currentUser];
+        newTask.status = @(TaskStatusDefault);
+        newTask.expiration = self.taskDictionary[TaskDateKey];
+        newTask.reward = self.taskDictionary[TaskBidKey];
+        for (PFUser *user in self.taskDictionary[TaskFriendsKey]) {
+            [newTask.asigned addObject:user];
         }
 
-        PFQuery *pushQuery = [PFInstallation query];
-        [pushQuery whereKey:@"user" containedIn:self.taskDictionary[TaskFriendsKey]];
-        PFUser *currentUser = [PFUser currentUser];
-        NSString *message = currentUser.profileName ? [NSString stringWithFormat:@"%@: Help me!", currentUser.profileName] : @"Your friend need help!";
-        [PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
-    }
+        // Make a transaction.
+        PFUser *localUser = [PFUser currentUser];
+        [localUser fetchInBackgroundWithBlock:^(PFObject *object, NSError *error) {
+            if (error) {
+                [loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
+                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Check your network connection." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                return;
+            }
 
-    if (self.delegate) {
-        [self.delegate addJobVCDidFinish:self];
-    }
+            if ([localUser.balance integerValue] < [newTask.reward integerValue]) {
+                [loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
+                [[[UIAlertView alloc] initWithTitle:@"Error" message:@"You have not enough motives." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                return;
+            }
+
+            [newTask saveInBackgroundWithBlock:^(BOOL successful, NSError *error) {
+                if (!successful) {
+                    [loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
+                    [[[UIAlertView alloc] initWithTitle:@"Error" message:@"Check your network connection." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+                    return;
+                }
+
+                localUser.balance = @([localUser.balance integerValue] - [newTask.reward integerValue]);
+                [localUser saveInBackgroundWithBlock:^(BOOL successful, NSError *error) {
+                    for (PFUser *friend in self.taskDictionary[TaskFriendsKey]) {
+                        Notification *notification = [Notification new];
+                        notification.type = @(NotificationTypeNewTask);
+                        notification.isRead = @(NO);
+                        notification.sender = [PFUser currentUser];
+                        notification.task = newTask;
+                        notification.receiver = friend;
+                        [notification saveInBackground];
+                    }
+
+                    PFQuery *pushQuery = [PFInstallation query];
+                    [pushQuery whereKey:@"user" containedIn:self.taskDictionary[TaskFriendsKey]];
+                    PFUser *currentUser = [PFUser currentUser];
+                    NSString *message = currentUser.profileName ? [NSString stringWithFormat:@"%@: Help me!", currentUser.profileName] : @"Your friend need help!";
+                    [PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
+
+                    [loadingAlertView dismissWithClickedButtonIndex:0 animated:YES];
+                    if (self.delegate) {
+                        [self.delegate addJobVCDidFinish:self];
+                    }
+                }];
+            }];
+        }];
+    });
 }
 
 - (void)showAlertViewForAddButton
