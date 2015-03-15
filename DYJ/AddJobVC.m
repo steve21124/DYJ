@@ -101,7 +101,7 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
     
     // Text field top view.
     self.textFieldTopView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, SCREEN_BOUNDS.size.width, 44.0)];
-    self.textFieldTopView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewContentModeBottom;
+    self.textFieldTopView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
     self.textFieldTopView.backgroundColor = [UIColor whiteColor];
     
     UIView *separatorTop = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.textFieldTopView.width, PIXEL)];
@@ -355,13 +355,11 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
                 case VCSectionTitlesRowName:
                     cell.textField.placeholder = @"Your task title";
                     cell.textField.returnKeyType = UIReturnKeyNext;
-                    cell.textField.autocorrectionType = UITextAutocorrectionTypeNo;
                     cell.textField.inputAccessoryView = self.textFieldTopView;
                     break;
                 case VCSectionTitlesRowDescription:
                     cell.textField.placeholder = @"Describe your task here";
                     cell.textField.returnKeyType = UIReturnKeyNext;
-                    cell.textField.autocorrectionType = UITextAutocorrectionTypeNo;
                     cell.textField.inputAccessoryView = self.textFieldTopView;
                     break;
             }
@@ -643,18 +641,18 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
     [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:VCSectionBids] withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
-- (void)inputCellDidChangeText:(InputCell *)inputCell
+- (void)inputCellWillChangeText:(InputCell *)inputCell toText:(NSString *)newText
 {
     NSIndexPath *indexPath = [self.tableView indexPathForCell:inputCell];
     switch (indexPath.section) {
         case VCSectionTitles: {
             switch (indexPath.row) {
                 case VCSectionTitlesRowName: {
-                    self.taskDictionary[TaskTitleKey] = inputCell.textField.text;
+                    self.taskDictionary[TaskTitleKey] = newText;
                     break;
                 }
                 case VCSectionTitlesRowDescription: {
-                    self.taskDictionary[TaskDescriptionKey] = inputCell.textField.text;
+                    self.taskDictionary[TaskDescriptionKey] = newText;
                     break;
                 }
             }

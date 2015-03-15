@@ -12,7 +12,7 @@
 
 @protocol InputCellDelegate <NSObject>
 
-- (void)inputCellDidChangeText:(InputCell *)inputCell;
+- (void)inputCellWillChangeText:(InputCell *)inputCell toText:(NSString *)newText;
 - (void)inputCellPressedReturn:(InputCell *)inputCell;
 - (void)inputCellDidBeginEditing:(InputCell *)inputCell;
 

@@ -37,11 +37,11 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-    textField.text = [textField.text stringByReplacingCharactersInRange:range withString:string];
+    NSString *newText = [textField.text stringByReplacingCharactersInRange:range withString:string];
     if (self.delegate) {
-        [self.delegate inputCellDidChangeText:self];
+        [self.delegate inputCellWillChangeText:self toText:newText];
     }
-    return NO;
+    return YES;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
