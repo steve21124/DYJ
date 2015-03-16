@@ -47,6 +47,7 @@
     }
 
     if (![Helper sharedHelper].isAuthorized) {
+        self.updating = NO;
         return;
     }
 
@@ -64,22 +65,19 @@
             // Construct a PFUser query that will find friends whose facebook ids are contained in the current user's friend list.
             PFQuery *friendQuery = [PFUser query];
             [friendQuery whereKey:@"facebookId" containedIn:friendIds];
-            NSArray *friends = [friendQuery findObjects];
-
-            // Add relations with friends.
-            PFUser *localUser = [PFUser currentUser];
-            PFRelation *friendsRelation = [localUser relationForKey:@"friends"];
-            for (PFUser *friend in friends) {
-                [friendsRelation addObject:friend];
-            }
-            [localUser saveInBackground];
-
-#warning Push message example
-//            // Create our Installation query
-//            // Send push notification to query
-//            PFQuery *pushQuery = [PFInstallation query];
-//            [pushQuery whereKey:@"user" matchesQuery:friendQuery];
-//            [PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:@"New Push Message."];
+            [friendQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                if (objects.count) {
+                    // Add relations with friends.
+                    PFUser *localUser = [PFUser currentUser];
+                    PFRelation *friendsRelation = [localUser relationForKey:@"friends"];
+                    for (PFUser *friend in objects) {
+                        [friendsRelation addObject:friend];
+                    }
+                    [localUser saveInBackground];
+                }
+                self.updating = NO;
+            }];
+            return;
         } else if ([[[[error userInfo] objectForKey:@"error"] objectForKey:@"type"] isEqualToString: @"OAuthException"]) {
             // Since the request failed, we can check if it was due to an invalid session
             NSLog(@"The facebook session was invalidated");
@@ -87,7 +85,6 @@
         }
         self.updating = NO;
     }];
-
 }
 
 @end

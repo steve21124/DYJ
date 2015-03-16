@@ -59,7 +59,7 @@
             break;
         }
         case TaskCellItemTypeTimeLeft: {
-            BOOL isFinished = self.task.finishedAt;
+            BOOL isFinished = self.task.finishedAt ? YES : NO;
             UILabel *timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 9, self.width, 20)];
             timeLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
             timeLabel.font = [UIFont fontWithName:@"HelveticaNeueCyr-Medium" size:16];

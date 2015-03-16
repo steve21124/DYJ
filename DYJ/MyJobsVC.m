@@ -22,7 +22,7 @@
 @property UIImageView *arrow;
 
 @property UITableView *tableView;
-@property NSArray *tasks;
+@property (nonatomic) NSArray *tasks;
 
 @end
 
@@ -100,8 +100,13 @@
 - (void)addJobVCDidFinish:(AddJobVC *)vc
 {
     [self loadTasks];
-    [self.tableView reloadData];
     [self dismissViewControllerAnimated:YES completion:^(){}];
+}
+
+- (void)setTasks:(NSArray *)tasks
+{
+    _tasks = tasks;
+    [self.tableView reloadData];
 }
 
 - (void)loadTasks
@@ -111,13 +116,16 @@
         return;
     }
 
+    __weak MyJobsVC *weakSelf = self;
     PFQuery *taskQuery = [PFQuery queryWithClassName:[Task parseClassName]];
     [taskQuery whereKey:@"creator" equalTo:localUser];
     [taskQuery whereKey:@"status" containedIn:@[@(TaskStatusDefault), @(TaskStatusFinished)]];
     [taskQuery orderByDescending:@"createdAt"];
-    NSArray *tasks = [taskQuery findObjects];
-
-    self.tasks = tasks;
+    [taskQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (!error) {
+            weakSelf.tasks = objects;
+        }
+    }];
 }
 
 - (void)findOldTasks
@@ -130,27 +138,33 @@
     PFQuery *taskWithNotificationQuery = [Notification query];
     [taskWithNotificationQuery whereKey:@"type" equalTo:@(NotificationTypeTaskNoTimeLeft)];
     [taskWithNotificationQuery selectKeys:@[@"task"]];
-    NSArray *notificationsOfType = [taskWithNotificationQuery findObjects];
-    NSMutableArray *tasksWithNotifications = [NSMutableArray new];
-    for (Notification *notification in notificationsOfType) {
-        [tasksWithNotifications addObject:notification.task];
-    }
+    [taskWithNotificationQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (error) {
+            return;
+        }
+        NSArray *notificationsOfType = objects;
+        NSMutableArray *tasksWithNotifications = [NSMutableArray new];
+        for (Notification *notification in notificationsOfType) {
+            [tasksWithNotifications addObject:notification.task];
+        }
 
-    PFQuery *taskQuery = [PFQuery queryWithClassName:[Task parseClassName]];
-    [taskQuery whereKey:@"creator" equalTo:localUser];
-    [taskQuery whereKey:@"expiration" lessThanOrEqualTo:[NSDate date]];
-    [taskQuery whereKey:@"objectId" doesNotMatchKey:@"task" inQuery:taskWithNotificationQuery];
-    [taskQuery orderByDescending:@"createdAt"];
-    [taskQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        NSMutableArray *tasks = [objects mutableCopy];
-        for (Task *task in objects) {
-            for (Task *taskWithNotification in tasksWithNotifications) {
-                if ([task.objectId isEqualToString:taskWithNotification.objectId]) {
-                    [tasks removeObject:task];
+        PFQuery *taskQuery = [PFQuery queryWithClassName:[Task parseClassName]];
+        [taskQuery whereKey:@"creator" equalTo:localUser];
+        [taskQuery whereKey:@"expiration" lessThanOrEqualTo:[NSDate date]];
+        [taskQuery whereKey:@"objectId" doesNotMatchKey:@"task" inQuery:taskWithNotificationQuery];
+        [taskQuery orderByDescending:@"createdAt"];
+        [taskQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+            if (error || !objects.count) {
+                return;
+            }
+            NSMutableArray *tasks = [objects mutableCopy];
+            for (Task *task in objects) {
+                for (Task *taskWithNotification in tasksWithNotifications) {
+                    if ([task.objectId isEqualToString:taskWithNotification.objectId]) {
+                        [tasks removeObject:task];
+                    }
                 }
             }
-        }
-        if (!error && tasks.count) {
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(){
                 for (Task *task in tasks) {
                     Notification *notification = [Notification new];
@@ -162,7 +176,7 @@
                     [notification save];
                 }
             });
-        }
+        }];
     }];
 }
 

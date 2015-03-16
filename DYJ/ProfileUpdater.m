@@ -47,6 +47,7 @@
     }
 
     if (![Helper sharedHelper].isAuthorized) {
+        self.updating = NO;
         return;
     }
 
