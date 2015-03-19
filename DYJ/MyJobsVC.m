@@ -14,15 +14,20 @@
 #import "AddJobVC.h"
 #import "Task.h"
 #import "Notification.h"
+#import "HintView.h"
 
 @interface MyJobsVC () <UITableViewDataSource, UITableViewDelegate, AddJobVCDelegate, TaskCellDelegate>
 
 @property UIView *hintView;
+@property UIView *contentView;
+@property (nonatomic) HintView *connectionErrorView;
 @property UILabel *instructions;
 @property UIImageView *arrow;
 
 @property UITableView *tableView;
+@property UIRefreshControl *refreshControl;
 @property (nonatomic) NSArray *tasks;
+@property (nonatomic) BOOL connectionProblem;
 
 @end
 
@@ -47,7 +52,7 @@
     // Table View.
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
     self.tableView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    self.tableView.contentInset = UIEdgeInsetsMake(12.0, 0, 0, 0);
+    self.tableView.contentInset = UIEdgeInsetsMake(6.0, 0, 6.0, 0);
     self.tableView.backgroundColor = [UIColor colorWithColorCode:@"EAEAEA"];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -55,33 +60,41 @@
     [self.tableView registerClass:[TaskCell class] forCellReuseIdentifier:NSStringFromClass([TaskCell class])];
     [self.view addSubview:self.tableView];
 
+    // Content view.
+    CGRect frame = self.view.bounds;
+    frame.size.height -= self.tabBarController.tabBar.height;
+    self.contentView = [[UIView alloc] initWithFrame:frame];
+    self.contentView.userInteractionEnabled = NO;
+    self.contentView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    self.contentView.backgroundColor = [UIColor clearColor];
+    [self.view addSubview:self.contentView];
+
+    // Connection error view.
+    HintView *connectionErrorView = [[HintView alloc] initWithFrame:self.contentView.bounds];
+    connectionErrorView.userInteractionEnabled = NO;
+    connectionErrorView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    connectionErrorView.sidePadding = 30.0;
+    [connectionErrorView setTitleLabelText:@"No Connection"];
+    [connectionErrorView setDescriptionLabelText:@"Check your internet connection and retry loading."];
+    self.connectionErrorView = connectionErrorView;
+    [self.contentView addSubview:self.connectionErrorView];
+
     // Hint view.
-    self.hintView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, 120)];
-    [self.view addSubview:self.hintView];
+    [self addHintView];
 
-    self.instructions = [[UILabel alloc] initWithFrame:CGRectMake(30, self.hintView.height - 60, self.hintView.width - 60, 60)];
-    self.instructions.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
-    self.instructions.numberOfLines = 0;
-    [self.hintView addSubview:self.instructions];
-
-    NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
-    paragraphStyle.lineSpacing = 5.0;
-    paragraphStyle.alignment = NSTextAlignmentCenter;
-    UIFont *font = [UIFont fontWithName:@"HelveticaNeueCyr-Light" size:18];
-    UIColor *color = [[UIColor blackColor] colorWithAlphaComponent:0.55];
-    NSString *string = @"You haven’t set any goal yet. Start by tapping plus icon.";
-    NSAttributedString *attributedInstructions = [[NSAttributedString alloc] initWithString:string attributes:@{NSParagraphStyleAttributeName : paragraphStyle, NSFontAttributeName : font, NSForegroundColorAttributeName : color}];
-    self.instructions.attributedText = attributedInstructions;
-
-    self.arrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Arrow"]];
-    self.arrow.originY = 16.0;
-    self.arrow.originX = self.hintView.width - self.arrow.width - 20.0;
-    [self.hintView addSubview:self.arrow];
+    // Refresh control.
+    self.refreshControl = [UIRefreshControl new];
+    [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
+    [self.tableView insertSubview:self.refreshControl atIndex:0];
 
     // Load test data.
-    [self loadTasks];
+    [self loadTasksWithCompletionBlock:^(NSArray *tasks, NSError *error) {
+        [self.tableView reloadData];
+    }];
     [self findOldTasks];
 }
+
+#pragma mark - Add Task
 
 - (void)addButtonPressed:(id)sender
 {
@@ -94,25 +107,34 @@
 
 - (void)addJobVCDidCancel:(AddJobVC *)vc
 {
-    [self dismissViewControllerAnimated:YES completion:^(){}];
+    [self loadTasksWithCompletionBlock:^(NSArray *tasks, NSError *error) {
+        [self.tableView reloadData];
+    }];
 }
 
 - (void)addJobVCDidFinish:(AddJobVC *)vc
 {
-    [self loadTasks];
+    [self loadTasksWithCompletionBlock:nil];
     [self dismissViewControllerAnimated:YES completion:^(){}];
 }
 
-- (void)setTasks:(NSArray *)tasks
+#pragma mark - Updation
+
+- (void)refresh:(id)sender
 {
-    _tasks = tasks;
-    [self.tableView reloadData];
+    [self loadTasksWithCompletionBlock:^(NSArray *tasks, NSError *error) {
+        [self.refreshControl endRefreshing];
+        [self.tableView reloadData];
+    }];
 }
 
-- (void)loadTasks
+- (void)loadTasksWithCompletionBlock:(void (^)(NSArray *tasks, NSError *error))block
 {
     PFUser *localUser = [PFUser currentUser];
     if (!localUser) {
+        if (block) {
+            block(nil, [NSError errorWithDomain:@"" code:0 userInfo:@{@"description":@"No user."}]);
+        }
         return;
     }
 
@@ -122,8 +144,14 @@
     [taskQuery whereKey:@"status" containedIn:@[@(TaskStatusDefault), @(TaskStatusFinished)]];
     [taskQuery orderByDescending:@"createdAt"];
     [taskQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
-        if (!error) {
+        if (error) {
+            weakSelf.connectionProblem = YES;
+        } else {
+            weakSelf.connectionProblem = NO;
             weakSelf.tasks = objects;
+        }
+        if (block) {
+            block(objects, error);
         }
     }];
 }
@@ -180,10 +208,13 @@
     }];
 }
 
+#pragma mark - Table View
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger numberOfRows = [self.tasks count];
-    self.hintView.hidden = numberOfRows;
+    self.hintView.hidden = (numberOfRows || self.connectionProblem);
+    self.connectionErrorView.hidden = (numberOfRows || !self.connectionProblem);
     return numberOfRows;
 }
 
@@ -223,6 +254,34 @@
 - (void)taskCell:(TaskCell *)taskCell didSelectItemAtIndex:(NSInteger)index
 {
     
+}
+
+#pragma mark - Additional views
+
+- (void)addHintView
+{
+    self.hintView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.contentView.width, 120)];
+    self.hintView.backgroundColor = [UIColor clearColor];
+    [self.contentView addSubview:self.hintView];
+
+    self.instructions = [[UILabel alloc] initWithFrame:CGRectMake(30, self.hintView.height - 60, self.hintView.width - 60, 60)];
+    self.instructions.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
+    self.instructions.numberOfLines = 0;
+    [self.hintView addSubview:self.instructions];
+
+    NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
+    paragraphStyle.lineSpacing = 5.0;
+    paragraphStyle.alignment = NSTextAlignmentCenter;
+    UIFont *font = [UIFont fontWithName:@"HelveticaNeueCyr-Light" size:18];
+    UIColor *color = [[UIColor blackColor] colorWithAlphaComponent:0.55];
+    NSString *string = @"You haven’t set any goal yet. Start by tapping plus icon.";
+    NSAttributedString *attributedInstructions = [[NSAttributedString alloc] initWithString:string attributes:@{NSParagraphStyleAttributeName : paragraphStyle, NSFontAttributeName : font, NSForegroundColorAttributeName : color}];
+    self.instructions.attributedText = attributedInstructions;
+
+    self.arrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Arrow"]];
+    self.arrow.originY = 16.0;
+    self.arrow.originX = self.hintView.width - self.arrow.width - 20.0;
+    [self.hintView addSubview:self.arrow];
 }
 
 @end

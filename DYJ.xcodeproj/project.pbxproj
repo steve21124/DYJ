@@ -41,6 +41,7 @@
 		B0CABD9919FD943A002C37FD /* InputCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9819FD943A002C37FD /* InputCell.m */; };
 		B0CABD9C19FD9AD0002C37FD /* BaseCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9B19FD9AD0002C37FD /* BaseCell.m */; };
 		B0CABD9F19FDA6DB002C37FD /* InfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B0CABD9E19FDA6DB002C37FD /* InfoCell.m */; };
+		B0E471BA1ABA268C0092B338 /* HintView.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E471B91ABA268C0092B338 /* HintView.m */; };
 		B0E6DA6C16EF1DB6001CD002 /* NotificationActionSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E6DA6B16EF1DB6001CD002 /* NotificationActionSelector.m */; };
 		B0E79BC21AAE4454000B9179 /* PFUser+DYJ.m in Sources */ = {isa = PBXBuildFile; fileRef = B0E79BC11AAE4454000B9179 /* PFUser+DYJ.m */; };
 /* End PBXBuildFile section */
@@ -109,6 +110,8 @@
 		B0CABD9B19FD9AD0002C37FD /* BaseCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseCell.m; sourceTree = "<group>"; };
 		B0CABD9D19FDA6DB002C37FD /* InfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoCell.h; sourceTree = "<group>"; };
 		B0CABD9E19FDA6DB002C37FD /* InfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InfoCell.m; sourceTree = "<group>"; };
+		B0E471B81ABA268C0092B338 /* HintView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HintView.h; sourceTree = "<group>"; };
+		B0E471B91ABA268C0092B338 /* HintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HintView.m; sourceTree = "<group>"; };
 		B0E6DA6A16EF1DB6001CD002 /* NotificationActionSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotificationActionSelector.h; sourceTree = "<group>"; };
 		B0E6DA6B16EF1DB6001CD002 /* NotificationActionSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NotificationActionSelector.m; sourceTree = "<group>"; };
 		B0E79BC01AAE4454000B9179 /* PFUser+DYJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PFUser+DYJ.h"; sourceTree = "<group>"; };
@@ -398,6 +401,7 @@
 		B0B47C111AB0D7DE00ABCE1B /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B0E471B71ABA266F0092B338 /* HintView */,
 				B00511CC1A11645000A61AA4 /* Friends */,
 				B032D33719E8F66E00D9D5A4 /* Tasks */,
 				B0B47C151AB0D98500ABCE1B /* Notifications */,
@@ -448,6 +452,15 @@
 				B0CABD9B19FD9AD0002C37FD /* BaseCell.m */,
 			);
 			name = Cells;
+			sourceTree = "<group>";
+		};
+		B0E471B71ABA266F0092B338 /* HintView */ = {
+			isa = PBXGroup;
+			children = (
+				B0E471B81ABA268C0092B338 /* HintView.h */,
+				B0E471B91ABA268C0092B338 /* HintView.m */,
+			);
+			name = HintView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -564,6 +577,7 @@
 				B0B47C141AB0D89D00ABCE1B /* NotificationView.m in Sources */,
 				B032D22F19E8570700D9D5A4 /* StartVC.m in Sources */,
 				B008AF4219F7C8FC00445922 /* TaskCellItem.m in Sources */,
+				B0E471BA1ABA268C0092B338 /* HintView.m in Sources */,
 				B0CABD9919FD943A002C37FD /* InputCell.m in Sources */,
 				B02F048F19F2B6670034A1DE /* ProfileUpdater.m in Sources */,
 				B032D22C19E8570700D9D5A4 /* AppDelegate.m in Sources */,

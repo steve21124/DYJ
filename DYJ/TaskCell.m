@@ -42,6 +42,7 @@
     // Background.
     CGRect backgroundFrame = self.bounds;
     backgroundFrame.origin.x = sidePadding;
+    backgroundFrame.origin.y = padding / 2.0;
     backgroundFrame.size.height -= padding;
     backgroundFrame.size.width -= 2 * sidePadding;
     self.background = [[UIView alloc] initWithFrame:backgroundFrame];
