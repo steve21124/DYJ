@@ -8,8 +8,15 @@
 
 #import "TaskCell.h"
 #import "TaskCellItem.h"
-#import "Categories.h"
 #import "FriendsView.h"
+
+#define ITEMS_HEIGHT 48.0f
+#define HORIZONTAL_PADDING 12.0f
+#define VERTICAL_PADDING 5.0f
+#define CONTENT_TOP_PADDING 15.0f
+#define CONTENT_HORIZONTAL_PADDING 15.0f
+#define CONTENT_SPACING 8.0f
+#define AVATARS_VIEW_HEIGHT 24.0f
 
 @interface TaskCell ()
 
@@ -35,16 +42,13 @@
 - (void)configureCell
 {
     self.selectionStyle = UITableViewCellSelectionStyleNone;
-    CGFloat sidePadding = 12.0;
-    CGFloat padding = 10.0;
-    CGFloat itemsHeight = 48.0;
 
     // Background.
     CGRect backgroundFrame = self.bounds;
-    backgroundFrame.origin.x = sidePadding;
-    backgroundFrame.origin.y = padding / 2.0;
-    backgroundFrame.size.height -= padding;
-    backgroundFrame.size.width -= 2 * sidePadding;
+    backgroundFrame.origin.x = HORIZONTAL_PADDING;
+    backgroundFrame.origin.y = VERTICAL_PADDING;
+    backgroundFrame.size.height -= 2 * VERTICAL_PADDING;
+    backgroundFrame.size.width -= 2 * HORIZONTAL_PADDING;
     self.background = [[UIView alloc] initWithFrame:backgroundFrame];
     self.background.backgroundColor = [UIColor whiteColor];
     self.background.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -53,16 +57,16 @@
     self.backgroundView.backgroundColor = [UIColor clearColor];
 
     // Title.
-    self.title = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 0.0, self.background.width - 30.0, 0)];
-    self.title.height = self.background.height - 15.0 - 8.0 - 24.0 - 8.0 - itemsHeight;
-    self.title.originY = 15.0;
+    self.title = [[UILabel alloc] initWithFrame:CGRectMake(CONTENT_HORIZONTAL_PADDING, 0.0f, self.background.width - 2 * CONTENT_HORIZONTAL_PADDING, 0.0f)];
+    self.title.height = self.background.height - CONTENT_TOP_PADDING - CONTENT_SPACING - AVATARS_VIEW_HEIGHT - CONTENT_SPACING - ITEMS_HEIGHT;
+    self.title.originY = CONTENT_TOP_PADDING;
     self.title.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     self.title.numberOfLines = 0;
     [self.background addSubview:self.title];
 
     // Avatars.
-    self.avatars = [[FriendsView alloc] initWithFrame:CGRectMake(15.0, 0, self.background.width - 30.0, 24)];
-    self.avatars.originY = self.background.height - itemsHeight - self.avatars.height - 8.0;
+    self.avatars = [[FriendsView alloc] initWithFrame:CGRectMake(CONTENT_HORIZONTAL_PADDING, 0.0f, self.background.width - 2 * CONTENT_HORIZONTAL_PADDING, AVATARS_VIEW_HEIGHT)];
+    self.avatars.originY = self.background.height - ITEMS_HEIGHT - self.avatars.height - CONTENT_SPACING;
     self.avatars.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     [self.background addSubview:self.avatars];
 }
@@ -76,7 +80,6 @@
     }
     
     NSInteger numberOfTaskItems = [taskItemTypes count];
-    CGFloat itemsHeight = 48.0;
     
     // Items.
     if (self.taskItems) {
@@ -88,7 +91,7 @@
     for (NSInteger index = 0; index < numberOfTaskItems; index++) {
         CGFloat itemWidth = self.background.width / numberOfTaskItems;
         CGFloat itemOriginX = itemWidth * index;
-        CGRect itemRect = CGRectMake(itemOriginX, self.background.height - itemsHeight, itemWidth, itemsHeight);
+        CGRect itemRect = CGRectMake(itemOriginX, self.background.height - ITEMS_HEIGHT, itemWidth, ITEMS_HEIGHT);
         itemRect = CGRectIntegral(itemRect);
         TaskCellItem *item = [TaskCellItem itemWithFrame:itemRect];
         item.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
@@ -105,14 +108,14 @@
         }
     }
     NSMutableArray *separators = [NSMutableArray new];
-    UIView *horizontalLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.background.height - itemsHeight - PIXEL, self.background.width, PIXEL)];
+    UIView *horizontalLine = [[UIView alloc] initWithFrame:CGRectMake(0.0f, self.background.height - ITEMS_HEIGHT - PIXEL, self.background.width, PIXEL)];
     horizontalLine.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
     horizontalLine.backgroundColor = [UIColor colorWithColorCode:@"E8E8E8"];
     [self.background addSubview:horizontalLine];
     [separators addObject:horizontalLine];
     for (NSInteger index = 1; index < numberOfTaskItems; index++) {
         CGFloat originX = floor(self.background.width * index / numberOfTaskItems);
-        CGRect lineFrame = CGRectMake(originX, self.background.height - itemsHeight, PIXEL, itemsHeight);
+        CGRect lineFrame = CGRectMake(originX, self.background.height - ITEMS_HEIGHT, PIXEL, ITEMS_HEIGHT);
         UIView *line = [[UIView alloc] initWithFrame:lineFrame];
         line.backgroundColor = [UIColor colorWithColorCode:@"E8E8E8"];
         line.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleLeftMargin;
@@ -153,12 +156,7 @@
 
 - (void)setTaskTitle:(NSString *)title
 {
-    CGFloat sidePadding = 12.0;
-    CGFloat padding = 10.0;
-    CGFloat itemsHeight = 48.0;
-    NSInteger numberOfTaskItems = 3;
-
-    self.title.height = self.background.height - 15.0 - 8.0 - 24.0 - 8.0 - itemsHeight;
+    self.title.height = self.background.height - 15.0 - 8.0 - 24.0 - 8.0 - ITEMS_HEIGHT;
     self.title.attributedText = [[NSAttributedString alloc] initWithString:title attributes:[TaskCell titleAttributes]];
 }
 
@@ -167,21 +165,17 @@
     NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
     paragraphStyle.lineSpacing = 5.0;
     paragraphStyle.alignment = NSTextAlignmentLeft;
-    UIFont *font = [UIFont fontWithName:@"HelveticaNeueCyr-Light" size:16];
+    UIFont *font = [UIFont fontWithName:@"HelveticaNeueCyr-Light" size:16.0f];
     UIColor *color = [UIColor blackColor];
     return @{NSParagraphStyleAttributeName : paragraphStyle, NSFontAttributeName : font, NSForegroundColorAttributeName : color};
 }
 
 + (CGFloat)heightWithTitle:(NSString *)title width:(CGFloat)width
 {
-    CGFloat sidePadding = 12.0;
-    CGFloat padding = 10.0;
-    CGFloat itemsHeight = 48.0;
-
     NSAttributedString *attributed = [[NSAttributedString alloc] initWithString:title attributes:[self titleAttributes]];
-    CGRect rect = [attributed boundingRectWithSize:CGSizeMake(width - 2 * (padding + sidePadding), MAXFLOAT) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) context:nil];
+    CGRect rect = [attributed boundingRectWithSize:CGSizeMake(width - 2 * (HORIZONTAL_PADDING + CONTENT_HORIZONTAL_PADDING), MAXFLOAT) options:(NSStringDrawingUsesFontLeading | NSStringDrawingUsesLineFragmentOrigin) context:nil];
 
-    return ceil(rect.size.height + 15 + 8 + 24 + 8 + itemsHeight + padding);
+    return ceil(rect.size.height + CONTENT_TOP_PADDING + CONTENT_SPACING + AVATARS_VIEW_HEIGHT + CONTENT_SPACING + ITEMS_HEIGHT + 2 * VERTICAL_PADDING);
 }
 
 @end

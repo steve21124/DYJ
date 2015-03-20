@@ -7,7 +7,6 @@
 //
 
 #import "InputCell.h"
-#import "Categories.h"
 
 @interface InputCell () <UITextFieldDelegate>
 

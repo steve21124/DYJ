@@ -7,11 +7,9 @@
 //
 
 #import "FriendsJobsVC.h"
+
+// Views.
 #import "TaskCell.h"
-#import "Categories.h"
-#import <Parse/Parse.h>
-#import <ParseFacebookUtils/PFFacebookUtils.h>
-#import "Helper.h"
 
 @interface FriendsJobsVC () <UITableViewDataSource, UITableViewDelegate, TaskCellDelegate>
 

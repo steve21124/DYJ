@@ -7,7 +7,6 @@
 //
 
 #import "BaseVC.h"
-#import "Categories.h"
 
 @interface BaseVC ()
 

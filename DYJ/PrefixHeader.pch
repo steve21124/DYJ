@@ -1,0 +1,18 @@
+//
+//  PrefixHeader.pch
+//  DYJ
+//
+//  Created by Timur Bernikowich on 20.03.15.
+//  Copyright (c) 2015 Timur Bernikowich. All rights reserved.
+//
+
+#ifndef DYJ_PrefixHeader_pch
+#define DYJ_PrefixHeader_pch
+
+#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import "Categories.h"
+#import "Helper.h"
+#import "Customization.h"
+
+#endif

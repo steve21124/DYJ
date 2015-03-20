@@ -7,7 +7,6 @@
 //
 
 #import "InfoCell.h"
-#import "Categories.h"
 
 @implementation InfoCell
 

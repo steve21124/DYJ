@@ -7,7 +7,6 @@
 //
 
 #import "HintView.h"
-#import "Categories.h"
 
 @interface HintView ()
 

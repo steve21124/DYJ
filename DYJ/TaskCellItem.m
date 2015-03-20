@@ -7,7 +7,6 @@
 //
 
 #import "TaskCellItem.h"
-#import "Categories.h"
 
 @interface TaskCellItem ()
 
@@ -93,8 +92,8 @@
             break;
         }
         case TaskCellItemTypeRemindButton: {
-            self.defaultBackgroundColor = [UIColor colorWithColorCode:@"FF6C2F"];
-            self.highlightedBackgroundColor = [UIColor colorWithColorCode:@"B54618"];
+            self.defaultBackgroundColor = [UIColor mainAppColor];
+            self.highlightedBackgroundColor = [UIColor mainSelectedAppColor];
             self.userInteractionEnabled = YES;
             UILabel *actionLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 8, self.width, 22)];
             actionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
@@ -132,8 +131,8 @@
             break;
         }
         case TaskCellItemTypeTaskStatusButton: {
-            self.defaultBackgroundColor = [UIColor colorWithColorCode:@"73BE20"];
-            self.highlightedBackgroundColor = [UIColor colorWithColorCode:@"467C0B"];
+            self.defaultBackgroundColor = [UIColor secondaryAppColor];
+            self.highlightedBackgroundColor = [UIColor secondarySelectedAppColor];
             self.userInteractionEnabled = YES;
             UILabel *actionLabel = [[UILabel alloc] initWithFrame:self.bounds];
             actionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
@@ -149,7 +148,7 @@
             UILabel *actionLabel = [[UILabel alloc] initWithFrame:self.bounds];
             actionLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
             actionLabel.font = [UIFont fontWithName:@"HelveticaNeueCyr-Medium" size:18];
-            actionLabel.textColor = done ? [UIColor colorWithColorCode:@"467C0B"] : [UIColor colorWithColorCode:@"D0021B"];
+            actionLabel.textColor = done ? [UIColor secondarySelectedAppColor] : [UIColor colorWithColorCode:@"D0021B"];
             actionLabel.textAlignment = NSTextAlignmentCenter;
             actionLabel.text = done ? @"Done" : @"Fail";
             [self addSubview:actionLabel];

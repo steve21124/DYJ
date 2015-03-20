@@ -7,9 +7,6 @@
 //
 
 #import "ProfileUpdater.h"
-#import <Parse/Parse.h>
-#import <ParseFacebookUtils/PFFacebookUtils.h>
-#import "Helper.h"
 
 @interface ProfileUpdater ()
 

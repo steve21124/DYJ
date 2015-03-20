@@ -7,10 +7,11 @@
 //
 
 #import "TabBarVC.h"
-#import "Categories.h"
-#import <ParseFacebookUtils/PFFacebookUtils.h>
+
+// Controllers.
 #import "StartVC.h"
-#import "Helper.h"
+
+// Frameworks.
 @import QuartzCore;
 
 @interface TabBarVC ()
@@ -27,7 +28,7 @@
     [super viewDidLoad];
 
     // Load VCs.
-    self.tabBar.tintColor = [UIColor colorWithColorCode:@"FF6C2F"];
+    self.tabBar.tintColor = [UIColor mainAppColor];
     for (UIViewController *vc in self.viewControllers) {
         NSInteger index = [self.viewControllers indexOfObject:vc];
         NSDictionary *items = [self itemsForVCAtIndex:index];

@@ -7,12 +7,12 @@
 //
 
 #import "ProfileVC.h"
-#import "Categories.h"
-#import "Helper.h"
+
+// Views.
 #import "ProfileCell.h"
 #import "TaskCell.h"
 
-@interface ProfileVC () <UITableViewDataSource, UITableViewDelegate, TaskCellDelegate>
+@interface ProfileVC () <UITableViewDataSource, UITableViewDelegate>
 
 @property UITableView *tableView;
 @property PFUser *user;
@@ -121,7 +121,6 @@
         TaskCell *cell = [self.tableView dequeueReusableCellWithIdentifier:NSStringFromClass([TaskCell class]) forIndexPath:indexPath];
 
         Task *task = self.completedTasks[indexPath.row];
-        cell.delegate = self;
         cell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeTaskStatus)];
         cell.task = task;
         [cell setAvatarsURLs:@[]];

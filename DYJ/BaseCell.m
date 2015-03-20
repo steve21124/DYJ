@@ -7,7 +7,6 @@
 //
 
 #import "BaseCell.h"
-#import "Categories.h"
 
 @implementation BaseCell
 
@@ -35,7 +34,7 @@
     [self addSubview:self.separatorBottom];
     self.separatorMiddle = [[UIView alloc] initWithFrame:CGRectMake(self.separatorPadding, self.height - PIXEL, self.width - self.separatorPadding, PIXEL)];
     self.separatorMiddle.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
-    self.separatorTop.backgroundColor = self.separatorMiddle.backgroundColor = self.separatorBottom.backgroundColor = [UIColor colorWithColorCode:@"cccccc"];
+    self.separatorTop.backgroundColor = self.separatorMiddle.backgroundColor = self.separatorBottom.backgroundColor = [UIColor separatorColor];
     [self addSubview:self.separatorMiddle];
 }
 

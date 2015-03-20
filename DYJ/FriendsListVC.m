@@ -7,9 +7,9 @@
 //
 
 #import "FriendsListVC.h"
-#import "Categories.h"
+
+// Views.
 #import "InfoCell.h"
-#import "Helper.h"
 
 @interface FriendsListVC () <UITableViewDataSource, UITableViewDelegate>
 

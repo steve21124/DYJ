@@ -7,7 +7,6 @@
 //
 
 #import "FriendsView.h"
-#import "Categories.h"
 @import QuartzCore;
 
 @interface FriendsView ()

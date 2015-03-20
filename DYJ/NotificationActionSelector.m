@@ -7,7 +7,6 @@
 //
 
 #import "NotificationActionSelector.h"
-#import "Categories.h"
 #import "ActionButton.h"
 
 @import QuartzCore;
@@ -29,11 +28,11 @@
     // New button.
     ActionButton *newButton = [ActionButton buttonWithType:UIButtonTypeCustom];
     if (type == NotificationActionSelectorButtonTypeDestructive) {
-        newButton.defaultBackgroundColor = [UIColor colorWithColorCode:@"73BE20"];
-        newButton.highlightedBackgroundColor = [UIColor colorWithColorCode:@"467C0B"];
+        newButton.defaultBackgroundColor = [UIColor secondaryAppColor];
+        newButton.highlightedBackgroundColor = [UIColor secondarySelectedAppColor];
     } else {
-        newButton.defaultBackgroundColor = [UIColor colorWithColorCode:@"FF6C2F"];
-        newButton.highlightedBackgroundColor = [UIColor colorWithColorCode:@"B54618"];
+        newButton.defaultBackgroundColor = [UIColor mainAppColor];
+        newButton.highlightedBackgroundColor = [UIColor mainSelectedAppColor];
     }
     [newButton setTitle:title forState:UIControlStateNormal];
     [newButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];

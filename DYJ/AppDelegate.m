@@ -7,13 +7,10 @@
 //
 
 #import "AppDelegate.h"
-#import <FacebookSDK/FacebookSDK.h>
-#import <Parse/Parse.h>
-#import <ParseFacebookUtils/PFFacebookUtils.h>
+
+// Models.
 #import "FriendsUpdater.h"
 #import "ProfileUpdater.h"
-#import "Helper.h"
-#import <objc/runtime.h>
 
 @interface AppDelegate ()
 

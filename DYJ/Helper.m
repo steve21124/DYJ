@@ -7,9 +7,13 @@
 //
 
 #import "Helper.h"
+
+// Frameworks.
 #import <Parse/Parse.h>
 #import <ParseFacebookUtils/PFFacebookUtils.h>
 #import <FacebookSDK/FacebookSDK.h>
+
+// Models.
 #import "ProfileUpdater.h"
 #import "FriendsUpdater.h"
 

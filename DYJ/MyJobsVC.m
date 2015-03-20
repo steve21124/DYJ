@@ -8,7 +8,6 @@
 
 #import "MyJobsVC.h"
 #import "TaskCell.h"
-#import "Categories.h"
 #import <Parse/Parse.h>
 #import <ParseFacebookUtils/PFFacebookUtils.h>
 #import "AddJobVC.h"

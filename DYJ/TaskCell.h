@@ -20,7 +20,7 @@
 
 @interface TaskCell : UITableViewCell
 
-@property (nonatomic) id <TaskCellDelegate> delegate;
+@property (nonatomic, weak) id <TaskCellDelegate> delegate;
 
 @property (nonatomic) NSArray *taskItemTypes;
 @property (nonatomic) Task *task;

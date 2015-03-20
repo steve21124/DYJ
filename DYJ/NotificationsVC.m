@@ -7,8 +7,8 @@
 //
 
 #import "NotificationsVC.h"
-#import "Helper.h"
-#import "Categories.h"
+
+// Views.
 #import "NotificationView.h"
 #import "NotificationActionSelector.h"
 

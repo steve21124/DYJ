@@ -7,7 +7,6 @@
 //
 
 #import "AddJobVC.h"
-#import "Categories.h"
 #import "Task.h"
 #import "Notification.h"
 #import "InputCell.h"
@@ -105,13 +104,13 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
     self.textFieldTopView.backgroundColor = [UIColor whiteColor];
     
     UIView *separatorTop = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.textFieldTopView.width, PIXEL)];
-    separatorTop.backgroundColor = [UIColor colorWithColorCode:@"cccccc"];
+    separatorTop.backgroundColor = [UIColor separatorColor];
     [self.textFieldTopView addSubview:separatorTop];
     
     // Done text field button.
     UIButton *doneTextFieldButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [doneTextFieldButton setTitle:@"Done" forState:UIControlStateNormal];
-    [doneTextFieldButton setTitleColor:[UIColor colorWithColorCode:@"FF6C2F"] forState:UIControlStateNormal];
+    [doneTextFieldButton setTitleColor:[UIColor mainAppColor] forState:UIControlStateNormal];
     doneTextFieldButton.frame = CGRectMake(self.textFieldTopView.width - 100, 0, 100, 44);
     [doneTextFieldButton addTarget:self action:@selector(doneTextFieldButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.textFieldTopView addSubview:doneTextFieldButton];
@@ -184,9 +183,9 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
 - (void)updateAddButton
 {
     if ([self dataAreCorrect]) {
-        self.navigationItem.rightBarButtonItem.tintColor = [UIColor colorWithColorCode:@"FF6C2F"];
+        self.navigationItem.rightBarButtonItem.tintColor = [UIColor mainAppColor];
     } else {
-        self.navigationItem.rightBarButtonItem.tintColor = [UIColor colorWithColorCode:@"CCCCCC"];
+        self.navigationItem.rightBarButtonItem.tintColor = [UIColor separatorColor];
     }
 }
 
@@ -509,11 +508,11 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
 
             UIView *separatorTop = [[UIView alloc] initWithFrame:CGRectMake(0, 0, pickerView.width, PIXEL)];
             [pickerView addSubview:separatorTop];
-            separatorTop.backgroundColor = [UIColor colorWithColorCode:@"cccccc"];
+            separatorTop.backgroundColor = [UIColor separatorColor];
 
             UIButton *done = [UIButton buttonWithType:UIButtonTypeCustom];
             [done setTitle:@"Done" forState:UIControlStateNormal];
-            [done setTitleColor:[UIColor colorWithColorCode:@"FF6C2F"] forState:UIControlStateNormal];
+            [done setTitleColor:[UIColor mainAppColor] forState:UIControlStateNormal];
             done.frame = CGRectMake(pickerView.width - 100, 0, 100, 44);
             [done addTarget:self action:@selector(datePickerDoneButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
             [pickerView addSubview:done];
@@ -561,11 +560,11 @@ typedef NS_ENUM(NSUInteger, VCSectionBidsRow) {
 
             UIView *separatorTop = [[UIView alloc] initWithFrame:CGRectMake(0, 0, pickerView.width, PIXEL)];
             [pickerView addSubview:separatorTop];
-            separatorTop.backgroundColor = [UIColor colorWithColorCode:@"cccccc"];
+            separatorTop.backgroundColor = [UIColor separatorColor];
 
             UIButton *done = [UIButton buttonWithType:UIButtonTypeCustom];
             [done setTitle:@"Done" forState:UIControlStateNormal];
-            [done setTitleColor:[UIColor colorWithColorCode:@"FF6C2F"] forState:UIControlStateNormal];
+            [done setTitleColor:[UIColor mainAppColor] forState:UIControlStateNormal];
             done.frame = CGRectMake(pickerView.width - 100, 0, 100, 44);
             [done addTarget:self action:@selector(motivesPickerDoneButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
             [pickerView addSubview:done];

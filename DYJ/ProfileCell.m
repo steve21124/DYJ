@@ -7,7 +7,6 @@
 //
 
 #import "ProfileCell.h"
-#import "Categories.h"
 @import QuartzCore;
 
 @implementation ProfileCell

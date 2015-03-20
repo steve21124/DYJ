@@ -7,11 +7,9 @@
 //
 
 #import "StartVC.h"
-#import <Parse/Parse.h>
-#import <ParseFacebookUtils/PFFacebookUtils.h>
-#import "Categories.h"
+
+// Models.
 #import "ProfileUpdater.h"
-#import "Helper.h"
 
 @interface StartVC ()
 
@@ -64,7 +62,7 @@
     // Title.
     self.appTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.helloView.width, 36)];
     self.appTitle.originY = self.helloView.height - 36 - 20 - self.instructions.height;
-    self.appTitle.textColor = [UIColor colorWithColorCode:@"FF6C2F"];
+    self.appTitle.textColor = [UIColor mainAppColor];
     self.appTitle.textAlignment = NSTextAlignmentCenter;
     self.appTitle.font = [UIFont fontWithName:@"HelveticaNeueCyr-Light" size:30];
     self.appTitle.text = NSLocalizedString(@"Do Your Job!", nil);
