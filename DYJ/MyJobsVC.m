@@ -100,6 +100,12 @@
     [self findOldTasks];
 }
 
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [self.refreshControl endRefreshing];
+}
+
 #pragma mark - Add Task
 
 - (void)addButtonPressed:(id)sender

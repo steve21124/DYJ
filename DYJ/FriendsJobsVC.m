@@ -91,6 +91,12 @@
     }];
 }
 
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    [self.refreshControl endRefreshing];
+}
+
 #pragma mark - Updation
 
 - (void)refresh:(id)sender
