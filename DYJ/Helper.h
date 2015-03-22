@@ -7,8 +7,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <Parse/Parse.h>
-#import <ParseFacebookUtils/PFFacebookUtils.h>
 #import "Notification.h"
 #import "PFUser+DYJ.h"
 #import "Task.h"

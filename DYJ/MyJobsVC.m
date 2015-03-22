@@ -7,21 +7,23 @@
 //
 
 #import "MyJobsVC.h"
-#import "TaskCell.h"
-#import <Parse/Parse.h>
-#import <ParseFacebookUtils/PFFacebookUtils.h>
-#import "AddJobVC.h"
+
+// Models.
 #import "Task.h"
 #import "Notification.h"
+
+// Controllers.
+#import "AddJobVC.h"
+
+// Views.
+#import "TaskCell.h"
 #import "HintView.h"
 
 @interface MyJobsVC () <UITableViewDataSource, UITableViewDelegate, AddJobVCDelegate, TaskCellDelegate>
 
-@property UIView *hintView;
 @property UIView *contentView;
+@property UIView *hintView;
 @property (nonatomic) HintView *connectionErrorView;
-@property UILabel *instructions;
-@property UIImageView *arrow;
 
 @property UITableView *tableView;
 @property UIRefreshControl *refreshControl;
@@ -90,7 +92,7 @@
     [self.tableView insertSubview:self.refreshControl atIndex:0];
     [self.refreshControl beginRefreshing];
 
-    // Load test data.
+    // Load data.
     [self loadTasksWithCompletionBlock:^(NSArray *tasks, NSError *error) {
         [self.refreshControl endRefreshing];
         [self.tableView reloadData];
@@ -111,14 +113,17 @@
 
 - (void)addJobVCDidCancel:(AddJobVC *)vc
 {
-    [self loadTasksWithCompletionBlock:^(NSArray *tasks, NSError *error) {
-        [self.tableView reloadData];
-    }];
+    [self dismissViewControllerAnimated:YES completion:^(){}];
 }
 
 - (void)addJobVCDidFinish:(AddJobVC *)vc
 {
-    [self loadTasksWithCompletionBlock:nil];
+    // Load data.
+    [self.refreshControl beginRefreshing];
+    [self loadTasksWithCompletionBlock:^(NSArray *tasks, NSError *error) {
+        [self.refreshControl endRefreshing];
+        [self.tableView reloadData];
+    }];
     [self dismissViewControllerAnimated:YES completion:^(){}];
 }
 
@@ -270,10 +275,10 @@
     self.hintView.backgroundColor = [UIColor clearColor];
     [self.contentView addSubview:self.hintView];
 
-    self.instructions = [[UILabel alloc] initWithFrame:CGRectMake(30, self.hintView.height - 60, self.hintView.width - 60, 60)];
-    self.instructions.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
-    self.instructions.numberOfLines = 0;
-    [self.hintView addSubview:self.instructions];
+    UILabel *instructions = [[UILabel alloc] initWithFrame:CGRectMake(30, self.hintView.height - 60, self.hintView.width - 60, 60)];
+    instructions.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
+    instructions.numberOfLines = 0;
+    [self.hintView addSubview:instructions];
 
     NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
     paragraphStyle.lineSpacing = 5.0;
@@ -282,12 +287,12 @@
     UIColor *color = [[UIColor blackColor] colorWithAlphaComponent:0.55];
     NSString *string = @"You haven’t set any goal yet. Start by tapping plus icon.";
     NSAttributedString *attributedInstructions = [[NSAttributedString alloc] initWithString:string attributes:@{NSParagraphStyleAttributeName : paragraphStyle, NSFontAttributeName : font, NSForegroundColorAttributeName : color}];
-    self.instructions.attributedText = attributedInstructions;
+    instructions.attributedText = attributedInstructions;
 
-    self.arrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Arrow"]];
-    self.arrow.originY = 16.0;
-    self.arrow.originX = self.hintView.width - self.arrow.width - 20.0;
-    [self.hintView addSubview:self.arrow];
+    UIImageView *arrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Arrow"]];
+    arrow.originY = 16.0;
+    arrow.originX = self.hintView.width - arrow.width - 20.0;
+    [self.hintView addSubview:arrow];
 }
 
 @end

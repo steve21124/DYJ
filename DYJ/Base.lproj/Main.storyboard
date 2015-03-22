@@ -55,7 +55,7 @@
         <!--Item-->
         <scene sceneID="5Z3-Mu-a94">
             <objects>
-                <viewController id="tkB-iG-Hn5" customClass="FriendsJobsVC" sceneMemberID="viewController">
+                <viewController id="tkB-iG-Hn5" customClass="MyJobsVC" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="3BC-YT-1hT"/>
                         <viewControllerLayoutGuide type="bottom" id="HnF-ci-waF"/>
@@ -75,7 +75,7 @@
         <!--Item-->
         <scene sceneID="S00-Dt-oHb">
             <objects>
-                <viewController id="o7B-C7-g9x" customClass="MyJobsVC" sceneMemberID="viewController">
+                <viewController id="o7B-C7-g9x" customClass="FriendsJobsVC" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="VwI-ZC-zXr"/>
                         <viewControllerLayoutGuide type="bottom" id="p4R-Po-b7j"/>
@@ -112,7 +112,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yCu-Hg-9fk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3933" y="1074"/>
+            <point key="canvasLocation" x="3937" y="1842"/>
         </scene>
         <!--Friends ListVC-->
         <scene sceneID="1aD-iS-9dL">
@@ -130,7 +130,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BAw-KU-2g7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4897.5" y="1074"/>
+            <point key="canvasLocation" x="4901" y="1842"/>
         </scene>
         <!--NavigationVC-->
         <scene sceneID="qaL-aS-gJq">
@@ -146,7 +146,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="YBx-ox-WDT" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3045" y="1074"/>
+            <point key="canvasLocation" x="3049" y="1842"/>
         </scene>
         <!--Item-->
         <scene sceneID="AO8-M7-eii">

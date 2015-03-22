@@ -76,7 +76,11 @@
     if ([_taskItemTypes isEqualToArray:taskItemTypes]) {
         return;
     } else {
+        NSInteger oldTaskItemTypesNumber = _taskItemTypes.count;
         _taskItemTypes = taskItemTypes;
+        if (taskItemTypes.count == oldTaskItemTypesNumber) {
+            return;
+        }
     }
     
     NSInteger numberOfTaskItems = [taskItemTypes count];

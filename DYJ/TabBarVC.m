@@ -76,13 +76,13 @@
 {
     switch (index) {
         case 0:
-            return @{@"title" : @"Me", @"image" : @"You 2"};
+            return @{@"title" : @"Friends", @"image" : @"Friends"};
         case 1:
-            return @{@"title" : @"Friends", @"image" : @"Friends 2"};
+            return @{@"title" : @"Me", @"image" : @"You"};
         case 2:
-            return @{@"title" : @"Do it", @"image" : @"Do it 2"};
+            return @{@"title" : @"Do it", @"image" : @"DoIt"};
         case 3:
-            return @{@"title" : @"Profile", @"image" : @"Profile 2"};
+            return @{@"title" : @"Profile", @"image" : @"Profile"};
         default:
             return nil;
     }

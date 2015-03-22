@@ -9,14 +9,23 @@
 #import "FriendsJobsVC.h"
 
 // Views.
+#import "HintView.h"
 #import "TaskCell.h"
+
+#define PING_REFRESH_TIME 3600
 
 @interface FriendsJobsVC () <UITableViewDataSource, UITableViewDelegate, TaskCellDelegate>
 
-@property UIView *hintView;
-@property UILabel *instructions;
+@property UIView *contentView;
+@property (nonatomic) HintView *connectionErrorView;
+@property (nonatomic) HintView *noJobsView;
+
 @property UITableView *tableView;
+@property UIRefreshControl *refreshControl;
 @property NSArray *tasks;
+
+@property (nonatomic) BOOL connectionProblem;
+@property (nonatomic) BOOL firstTimeLoading;
 
 @end
 
@@ -27,6 +36,7 @@
     [super viewDidLoad];
 
     self.navigationItem.title = @"JOBS YOUR FRIENDS DO";
+    self.firstTimeLoading = YES;
 
     // Table View.
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
@@ -39,56 +49,96 @@
     [self.tableView registerClass:[TaskCell class] forCellReuseIdentifier:NSStringFromClass([TaskCell class])];
     [self.view addSubview:self.tableView];
 
-    // Hint view.
-    self.hintView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.width, self.view.height - 120)];
-    [self.view addSubview:self.hintView];
+    // Content view.
+    CGRect frame = self.view.bounds;
+    frame.size.height -= self.tabBarController.tabBar.height;
+    self.contentView = [[UIView alloc] initWithFrame:frame];
+    self.contentView.userInteractionEnabled = NO;
+    self.contentView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    self.contentView.backgroundColor = [UIColor clearColor];
+    [self.view addSubview:self.contentView];
 
-    self.instructions = [[UILabel alloc] initWithFrame:CGRectMake(30.0, 0.0, self.hintView.width - 60, self.hintView.height)];
-    self.instructions.autoresizingMask = UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleWidth;
-    self.instructions.numberOfLines = 0;
-    [self.hintView addSubview:self.instructions];
+    // Connection error view.
+    HintView *connectionErrorView = [[HintView alloc] initWithFrame:self.contentView.bounds];
+    connectionErrorView.userInteractionEnabled = NO;
+    connectionErrorView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    connectionErrorView.sidePadding = 30.0;
+    [connectionErrorView setTitleLabelText:@"No Connection"];
+    [connectionErrorView setDescriptionLabelText:@"Check your internet connection and retry loading."];
+    self.connectionErrorView = connectionErrorView;
+    [self.contentView addSubview:self.connectionErrorView];
 
-    NSMutableParagraphStyle *paragraphStyle = [NSMutableParagraphStyle new];
-    paragraphStyle.lineSpacing = 5.0;
-    paragraphStyle.alignment = NSTextAlignmentCenter;
-    UIFont *font = [UIFont fontWithName:@"HelveticaNeueCyr-Light" size:18];
-    UIColor *color = [[UIColor blackColor] colorWithAlphaComponent:0.55];
-    NSString *string = @"There’s no jobs yet. However, you can remind your friends to get started!";
-    NSAttributedString *attributedInstructions = [[NSAttributedString alloc] initWithString:string attributes:@{NSParagraphStyleAttributeName : paragraphStyle, NSFontAttributeName : font, NSForegroundColorAttributeName : color}];
-    self.instructions.attributedText = attributedInstructions;
+    // No jobs view.
+    HintView *noJobsView = [[HintView alloc] initWithFrame:self.contentView.bounds];
+    noJobsView.userInteractionEnabled = NO;
+    noJobsView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    noJobsView.sidePadding = 30.0;
+    [noJobsView setTitleLabelText:@"There’s no jobs yet"];
+    [noJobsView setDescriptionLabelText:@"However, you can remind your friends to get started!"];
+    self.noJobsView = noJobsView;
+    [self.contentView addSubview:self.noJobsView];
 
-    // Load test data.
-    [self loadTasks];
-    
+    // Refresh control.
+    self.refreshControl = [UIRefreshControl new];
+    [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
+    [self.tableView insertSubview:self.refreshControl atIndex:0];
+    [self.refreshControl beginRefreshing];
+
+    // Load data.
+    [self loadTasksWithCompletionBlock:^(NSArray *tasks, NSError *error) {
+        [self.refreshControl endRefreshing];
+        [self.tableView reloadData];
+    }];
 }
 
-- (void)loadTasks
+#pragma mark - Updation
+
+- (void)refresh:(id)sender
+{
+    [self loadTasksWithCompletionBlock:^(NSArray *tasks, NSError *error) {
+        [self.refreshControl endRefreshing];
+        [self.tableView reloadData];
+    }];
+}
+
+- (void)loadTasksWithCompletionBlock:(void (^)(NSArray *tasks, NSError *error))block
 {
     PFUser *localUser = [PFUser currentUser];
     if (!localUser) {
+        if (block) {
+            block(nil, [NSError errorWithDomain:@"" code:0 userInfo:@{@"description":@"No user."}]);
+        }
         return;
     }
-    
+
+    __weak FriendsJobsVC *weakSelf = self;
     PFQuery *taskQuery = [PFQuery queryWithClassName:[Task parseClassName]];
     [taskQuery whereKey:@"asigned" equalTo:[PFUser currentUser]];
     [taskQuery whereKey:@"status" containedIn:@[@(TaskStatusDefault)]];
     [taskQuery whereKey:@"expiration" greaterThan:[NSDate date]];
     [taskQuery orderByDescending:@"createdAt"];
-    NSArray *tasks = [taskQuery findObjects];
-//    
-//    query findObjectsInBackgroundWithBlock:^(NSArray *tasks, NSError *error) {
-//        if (!error) {
-//            
-//        }
-//    }];
-    
-    self.tasks = tasks;
+    [taskQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (error) {
+            weakSelf.firstTimeLoading = NO;
+            weakSelf.connectionProblem = YES;
+        } else {
+            weakSelf.firstTimeLoading = NO;
+            weakSelf.connectionProblem = NO;
+            weakSelf.tasks = objects;
+        }
+        if (block) {
+            block(objects, error);
+        }
+    }];
 }
+
+#pragma mark - Table View
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger numberOfRows = [self.tasks count];
-    self.hintView.hidden = numberOfRows;
+    self.noJobsView.hidden = (numberOfRows || self.connectionProblem || self.firstTimeLoading);
+    self.connectionErrorView.hidden = (numberOfRows || !self.connectionProblem || self.firstTimeLoading);
     return numberOfRows;
 }
 
@@ -108,27 +158,11 @@
     cell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeLoading)];
     cell.task = task;
     [cell setAvatarsURLs:@[]];
+    
     __weak TaskCell *weakCell = cell;
     __weak Task *weakTask = task;
 
-    PFQuery *notificationQuery = [PFQuery queryWithClassName:[Notification parseClassName]];
-    [notificationQuery whereKey:@"sender" equalTo:[PFUser currentUser]];
-    [notificationQuery whereKey:@"receiver" equalTo:task.creator];
-    [notificationQuery whereKey:@"task" equalTo:task];
-    [notificationQuery whereKey:@"type" equalTo:@(NotificationTypePing)];
-    [notificationQuery whereKey:@"createdAt" greaterThan:[NSDate dateWithTimeIntervalSinceNow:- 60 * 60]];
-    [notificationQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
-        if (!error && weakCell.task == weakTask) {
-            if (objects.count) {
-                weakCell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeRemindStatus)];
-                [weakCell reloadItems];
-            } else {
-                weakCell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeRemindButton)];
-                [weakCell reloadItems];
-            }
-        }
-    }];
-    
+    [self updateCellStatus:cell];
     [[task.asigned query] findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (!error && weakCell.task == weakTask) {
             NSMutableArray *urls = [NSMutableArray new];
@@ -142,6 +176,38 @@
     return cell;
 }
 
+#pragma mark - Pings
+
+- (void)updateCellStatus:(TaskCell *)cell
+{
+    __weak TaskCell *weakCell = cell;
+    __weak Task *weakTask = cell.task;
+
+    PFQuery *notificationQuery = [self queryForFreshPings:cell.task];
+    [notificationQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
+        if (!error && weakCell.task == weakTask) {
+            if (objects.count) {
+                weakCell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeRemindStatus)];
+                [weakCell reloadItems];
+            } else {
+                weakCell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeRemindButton)];
+                [weakCell reloadItems];
+            }
+        }
+    }];
+}
+
+- (PFQuery *)queryForFreshPings:(Task *)task
+{
+    PFQuery *notificationQuery = [PFQuery queryWithClassName:[Notification parseClassName]];
+    [notificationQuery whereKey:@"sender" equalTo:[PFUser currentUser]];
+    [notificationQuery whereKey:@"receiver" equalTo:task.creator];
+    [notificationQuery whereKey:@"task" equalTo:task];
+    [notificationQuery whereKey:@"type" equalTo:@(NotificationTypePing)];
+    [notificationQuery whereKey:@"createdAt" greaterThan:[NSDate dateWithTimeIntervalSinceNow:- PING_REFRESH_TIME]];
+    return notificationQuery;
+}
+
 - (void)taskCell:(TaskCell *)taskCell didSelectItemAtIndex:(NSInteger)index
 {
     taskCell.taskItemTypes = @[@(TaskCellItemTypeTimeLeft), @(TaskCellItemTypeBid), @(TaskCellItemTypeLoading)];
@@ -152,47 +218,30 @@
     __weak FriendsJobsVC *weakSelf = self;
     __weak TaskCell *weakCell = taskCell;
 
-    PFQuery *notificationQuery = [PFQuery queryWithClassName:[Notification parseClassName]];
-    [notificationQuery whereKey:@"sender" equalTo:[PFUser currentUser]];
-    [notificationQuery whereKey:@"receiver" equalTo:task.creator];
-    [notificationQuery whereKey:@"task" equalTo:task];
-    [notificationQuery whereKey:@"type" equalTo:@(NotificationTypePing)];
-    [notificationQuery whereKey:@"createdAt" greaterThan:[NSDate dateWithTimeIntervalSinceNow:- 60 * 60]];
+    PFQuery *notificationQuery = [self queryForFreshPings:task];
     [notificationQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error){
-        if (!error) {
-            if (!objects.count) {
-                Notification *notification = [Notification new];
-                notification.type = @(NotificationTypePing);
-                notification.isRead = @(NO);
-                notification.sender = [PFUser currentUser];
-                notification.task = task;
-                notification.receiver = task.creator;
-                [notification save];
+        if (!error && !objects.count) {
+            Notification *notification = [Notification new];
+            notification.type = @(NotificationTypePing);
+            notification.isRead = @(NO);
+            notification.sender = [PFUser currentUser];
+            notification.task = task;
+            notification.receiver = task.creator;
+            [notification save];
 
-                PFQuery *pushQuery = [PFInstallation query];
-                [pushQuery whereKey:@"user" equalTo:task.creator];
-                PFUser *currentUser = [PFUser currentUser];
-                NSString *message = currentUser.profileName ? [NSString stringWithFormat:@"%@: Move on!", currentUser.profileName] : @"Move on!";
-                [PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
+            PFQuery *pushQuery = [PFInstallation query];
+            [pushQuery whereKey:@"user" equalTo:task.creator];
+            PFUser *currentUser = [PFUser currentUser];
+            NSString *message = currentUser.profileName ? [NSString stringWithFormat:@"%@: Move on!", currentUser.profileName] : @"Move on!";
+            [PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
 
-                dispatch_async(dispatch_get_main_queue(), ^(){
-                    if (weakCell && weakCell.task == task) {
-                        [weakSelf reloadCell:weakCell];
-                    }
-                });
-            }
+            dispatch_async(dispatch_get_main_queue(), ^(){
+                if (weakCell && weakCell.task == task) {
+                    [weakSelf updateCellStatus:weakCell];
+                }
+            });
         }
     }];
-}
-
-- (void)reloadCell:(UITableViewCell *)cell
-{
-    if (cell) {
-        NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
-        if (indexPath) {
-            [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-        }
-    }
 }
 
 @end

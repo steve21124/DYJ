@@ -246,6 +246,7 @@
 				B032D32F19E8F59400D9D5A4 /* BaseVCs */,
 				B032D32E19E8F58C00D9D5A4 /* StartVC */,
 				B032D34019E8F80B00D9D5A4 /* MainVCs */,
+				B0EEAB051ABF60E400A57518 /* AdditionalVCs */,
 			);
 			name = VCs;
 			sourceTree = "<group>";
@@ -320,10 +321,8 @@
 		B032D34019E8F80B00D9D5A4 /* MainVCs */ = {
 			isa = PBXGroup;
 			children = (
-				B06D51C71A06B44400063BFE /* FriendsList */,
-				B032D33319E8F62000D9D5A4 /* MyJobs */,
-				B032D33F19E8F7F600D9D5A4 /* AddJob */,
 				B032D33B19E8F7B400D9D5A4 /* FriendsJobs */,
+				B032D33319E8F62000D9D5A4 /* MyJobs */,
 				B032D33E19E8F7E300D9D5A4 /* Notifications */,
 				B0C6B6891AB37E3200C2BBCE /* Profile */,
 			);
@@ -484,6 +483,15 @@
 				B0E471B91ABA268C0092B338 /* HintView.m */,
 			);
 			name = HintView;
+			sourceTree = "<group>";
+		};
+		B0EEAB051ABF60E400A57518 /* AdditionalVCs */ = {
+			isa = PBXGroup;
+			children = (
+				B032D33F19E8F7F600D9D5A4 /* AddJob */,
+				B06D51C71A06B44400063BFE /* FriendsList */,
+			);
+			name = AdditionalVCs;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
