@@ -26,7 +26,9 @@
 @property UITableView *tableView;
 @property UIRefreshControl *refreshControl;
 @property (nonatomic) NSArray *tasks;
+
 @property (nonatomic) BOOL connectionProblem;
+@property (nonatomic) BOOL firstTimeLoading;
 
 @end
 
@@ -37,6 +39,7 @@
     [super viewDidLoad];
 
     self.navigationItem.title = @"MY JOBS";
+    self.firstTimeLoading = YES;
 
     // Add button.
     UIButton *addButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -85,9 +88,11 @@
     self.refreshControl = [UIRefreshControl new];
     [self.refreshControl addTarget:self action:@selector(refresh:) forControlEvents:UIControlEventValueChanged];
     [self.tableView insertSubview:self.refreshControl atIndex:0];
+    [self.refreshControl beginRefreshing];
 
     // Load test data.
     [self loadTasksWithCompletionBlock:^(NSArray *tasks, NSError *error) {
+        [self.refreshControl endRefreshing];
         [self.tableView reloadData];
     }];
     [self findOldTasks];
@@ -144,8 +149,10 @@
     [taskQuery orderByDescending:@"createdAt"];
     [taskQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (error) {
+            weakSelf.firstTimeLoading = NO;
             weakSelf.connectionProblem = YES;
         } else {
+            weakSelf.firstTimeLoading = NO;
             weakSelf.connectionProblem = NO;
             weakSelf.tasks = objects;
         }
@@ -212,8 +219,8 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     NSInteger numberOfRows = [self.tasks count];
-    self.hintView.hidden = (numberOfRows || self.connectionProblem);
-    self.connectionErrorView.hidden = (numberOfRows || !self.connectionProblem);
+    self.hintView.hidden = (numberOfRows || self.connectionProblem || self.firstTimeLoading);
+    self.connectionErrorView.hidden = (numberOfRows || !self.connectionProblem || self.firstTimeLoading);
     return numberOfRows;
 }
 
