@@ -18,8 +18,16 @@
 // Views.
 #import "TaskCell.h"
 #import "HintView.h"
+#import "NotificationView.h"
+#import "NotificationActionSelector.h"
 
-@interface MyJobsVC () <UITableViewDataSource, UITableViewDelegate, AddJobVCDelegate, TaskCellDelegate>
+#define NOTIFICATION_SIDE_PADDING 15.0
+#define NOTIFICATION_HEIGHT 260.0
+#define BUTTON_SIDE_PADDING 25.0
+#define BUTTON_HEIGHT 45.0
+#define BUTTON_NOTIFICATION_SPACING 12.0
+
+@interface MyJobsVC () <UITableViewDataSource, UITableViewDelegate, AddJobVCDelegate, TaskCellDelegate, NotificationActionSelectorDelegate>
 
 @property UIView *contentView;
 @property UIView *hintView;
@@ -28,6 +36,9 @@
 @property UITableView *tableView;
 @property UIRefreshControl *refreshControl;
 @property (nonatomic) NSArray *tasks;
+@property UIView *notificationsContainer;
+@property NotificationView *notificationView;
+@property NotificationActionSelector *actionSelector;
 
 @property (nonatomic) BOOL connectionProblem;
 @property (nonatomic) BOOL firstTimeLoading;
@@ -85,6 +96,13 @@
 
     // Hint view.
     [self addHintView];
+
+    // Notifications container.
+    self.notificationsContainer = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.contentView.width - 2 * NOTIFICATION_SIDE_PADDING, NOTIFICATION_HEIGHT + BUTTON_NOTIFICATION_SPACING + BUTTON_HEIGHT)];
+    self.notificationsContainer.backgroundColor = [UIColor clearColor];
+    self.notificationsContainer.center = CGPointMake(self.contentView.width / 2.0, self.contentView.height / 2.0);
+    self.notificationsContainer.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin | UIViewAutoresizingFlexibleBottomMargin;
+    [self.contentView addSubview:self.notificationsContainer];
 
     // Refresh control.
     self.refreshControl = [UIRefreshControl new];
@@ -156,7 +174,7 @@
     __weak MyJobsVC *weakSelf = self;
     PFQuery *taskQuery = [PFQuery queryWithClassName:[Task parseClassName]];
     [taskQuery whereKey:@"creator" equalTo:localUser];
-    [taskQuery whereKey:@"status" containedIn:@[@(TaskStatusDefault), @(TaskStatusFinished)]];
+    [taskQuery whereKey:@"status" containedIn:@[@(TaskStatusDefault)]];
     [taskQuery orderByDescending:@"createdAt"];
     [taskQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
         if (error) {
@@ -268,9 +286,119 @@
     return cell;
 }
 
+#pragma mark - Finish Task
+
 - (void)taskCell:(TaskCell *)taskCell didSelectItemAtIndex:(NSInteger)index
 {
-    
+    if ([taskCell.taskItemTypes[index] integerValue] == TaskCellItemTypeTaskStatusButton) {
+        __weak Task *weakTask = taskCell.task;
+        [UIAlertView showWithTitle:@"Warning" message:@"Do you want to finish your task now?" cancelButtonTitle:@"No" otherButtonTitles:@[@"Yes"] tapBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+            if (buttonIndex == alertView.cancelButtonIndex) {
+                return;
+            }
+            if (!weakTask) {
+                return;
+            }
+
+            PFQuery *taskWithNotificationQuery = [Notification query];
+            [taskWithNotificationQuery whereKey:@"type" equalTo:@(NotificationTypeTaskNoTimeLeft)];
+            [taskWithNotificationQuery whereKey:@"task" equalTo:weakTask];
+            [taskWithNotificationQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+                if (error || objects.count || !weakTask) {
+                    return;
+                }
+                Notification *notification = [Notification new];
+                notification.type = @(NotificationTypeTaskNoTimeLeft);
+                notification.isRead = @(NO);
+                notification.sender = [PFUser currentUser];
+                notification.task = weakTask;
+                notification.receiver = [PFUser currentUser];
+                [notification saveInBackground];
+
+                weakTask.status = @(TaskStatusFinished);
+                [weakTask saveInBackground];
+
+                CGRect frame = CGRectMake(0, 0, self.notificationsContainer.width, NOTIFICATION_HEIGHT);
+                NotificationView *notificationView = [[NotificationView alloc] initWithFrame:frame notification:notification];
+                self.notificationView = notificationView;
+                self.contentView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.2];
+                self.contentView.userInteractionEnabled = YES;
+                [self.notificationsContainer addSubview:notificationView];
+                notificationView.center = CGPointMake(self.notificationsContainer.width / 2.0, notificationView.height / 2.0);
+
+                NotificationActionSelector *selector = [[NotificationActionSelector alloc] initWithFrame:CGRectMake(0.0, self.notificationsContainer.height - BUTTON_HEIGHT, self.view.width - 2 * BUTTON_SIDE_PADDING, BUTTON_HEIGHT)];
+                selector.center = CGPointMake(self.notificationsContainer.width / 2.0, selector.centerY);
+                [selector addButtonWithTitle:@"NO" type:NotificationActionSelectorButtonTypeDefault];
+                [selector addButtonWithTitle:@"YES" type:NotificationActionSelectorButtonTypeDestructive];
+                selector.delegate = self;
+                self.actionSelector = selector;
+                [self.notificationsContainer addSubview:selector];
+            }];
+        }];
+    }
+}
+
+- (void)notificationActionSelector:(NotificationActionSelector *)selector didSelectButtonAtIndex:(NSInteger)index
+{
+    if (!self.notificationView) {
+        return;
+    }
+
+    Notification *notification = self.notificationView.notification;
+    self.actionSelector.userInteractionEnabled = NO;
+    Task *task = notification.task;
+    [task fetch];
+    PFQuery *asignedQuery = [task.asigned query];
+    [asignedQuery findObjectsInBackgroundWithBlock:^(NSArray *objects, NSError *error) {
+        if (error) {
+            self.actionSelector.userInteractionEnabled = YES;
+            return;
+        }
+
+        if (index == 0) {
+            PFUser *user = [PFUser currentUser];
+            user.balance = @([user.balance integerValue] + [task.reward integerValue]);
+            [user saveInBackground];
+
+            task.status = @(TaskStatusFail);
+        } else {
+            task.status = @(TaskStatusDone);
+
+            for (PFUser *friend in objects) {
+                friend.balance = @([friend.balance integerValue] + [task.reward integerValue] / objects.count);
+                [friend saveInBackground];
+            }
+        }
+        task.finishedAt = [NSDate date];
+        [task saveInBackground];
+
+        for (PFUser *friend in objects) {
+            Notification *notification = [Notification new];
+            notification.type = @(NotificationTypeReward);
+            notification.isRead = @(NO);
+            notification.sender = [PFUser currentUser];
+            notification.task = task;
+            notification.receiver = friend;
+            [notification saveInBackground];
+        }
+
+        PFQuery *pushQuery = [PFInstallation query];
+        [pushQuery whereKey:@"user" containedIn:objects];
+        PFUser *currentUser = [PFUser currentUser];
+        NSString *message = [NSString stringWithFormat:@"%@: Finished task!", currentUser.profileName];
+        [PFPush sendPushMessageToQueryInBackground:pushQuery withMessage:message];
+
+        notification.isRead = @(YES);
+        [notification saveInBackgroundWithBlock:^(BOOL successful, NSError *error) {
+            self.actionSelector.userInteractionEnabled = YES;
+            if (successful) {
+                self.contentView.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.0];
+                self.contentView.userInteractionEnabled = NO;
+                [self.notificationView removeFromSuperview];
+                [self.actionSelector removeFromSuperview];
+            }
+        }];
+    }];
 }
 
 #pragma mark - Additional views

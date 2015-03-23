@@ -14,6 +14,7 @@
 #import <Parse/Parse.h>
 #import <FacebookSDK/FacebookSDK.h>
 #import <ParseFacebookUtils/PFFacebookUtils.h>
+#import <UIAlertView+Blocks/UIAlertView+Blocks.h>
 #import "Categories.h"
 #import "Helper.h"
 #import "Customization.h"

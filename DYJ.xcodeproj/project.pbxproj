@@ -16,6 +16,8 @@
 		B008AF3F19F7C80700445922 /* TaskCell.m in Sources */ = {isa = PBXBuildFile; fileRef = B008AF3E19F7C80700445922 /* TaskCell.m */; };
 		B008AF4219F7C8FC00445922 /* TaskCellItem.m in Sources */ = {isa = PBXBuildFile; fileRef = B008AF4119F7C8FC00445922 /* TaskCellItem.m */; };
 		B02F048F19F2B6670034A1DE /* ProfileUpdater.m in Sources */ = {isa = PBXBuildFile; fileRef = B02F048E19F2B6670034A1DE /* ProfileUpdater.m */; };
+		B032C7291AC0A65600FE3882 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B032C7271AC0A65600FE3882 /* Crashlytics.framework */; };
+		B032C72A1AC0A65600FE3882 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B032C7281AC0A65600FE3882 /* Fabric.framework */; };
 		B032D22919E8570700D9D5A4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D22819E8570700D9D5A4 /* main.m */; };
 		B032D22C19E8570700D9D5A4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D22B19E8570700D9D5A4 /* AppDelegate.m */; };
 		B032D22F19E8570700D9D5A4 /* StartVC.m in Sources */ = {isa = PBXBuildFile; fileRef = B032D22E19E8570700D9D5A4 /* StartVC.m */; };
@@ -63,6 +65,8 @@
 		B008AF4119F7C8FC00445922 /* TaskCellItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TaskCellItem.m; sourceTree = "<group>"; };
 		B02F048D19F2B6670034A1DE /* ProfileUpdater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileUpdater.h; sourceTree = "<group>"; };
 		B02F048E19F2B6670034A1DE /* ProfileUpdater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProfileUpdater.m; sourceTree = "<group>"; };
+		B032C7271AC0A65600FE3882 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
+		B032C7281AC0A65600FE3882 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		B032D22319E8570700D9D5A4 /* DYJ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DYJ.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B032D22719E8570700D9D5A4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B032D22819E8570700D9D5A4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -128,7 +132,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B032C7291AC0A65600FE3882 /* Crashlytics.framework in Frameworks */,
 				532C36E93A3A48CDA7B1A026 /* libPods.a in Frameworks */,
+				B032C72A1AC0A65600FE3882 /* Fabric.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,6 +144,8 @@
 		10BB3FE0F5C744819AC02B5D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B032C7271AC0A65600FE3882 /* Crashlytics.framework */,
+				B032C7281AC0A65600FE3882 /* Fabric.framework */,
 				C9A57C83A310442AA2C49C09 /* libPods.a */,
 			);
 			name = Frameworks;
@@ -506,6 +514,7 @@
 				B032D22019E8570700D9D5A4 /* Frameworks */,
 				B032D22119E8570700D9D5A4 /* Resources */,
 				0A9CB4257AEF43729EEE387D /* Copy Pods Resources */,
+				B032C7261AC0A5D000FE3882 /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -595,6 +604,20 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
+		};
+		B032C7261AC0A5D000FE3882 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Fabric.framework/run 2e099948977c3209c187b03c1789a080c8abe114 6bc7f91dca6e19e9454165b7a3b6e3fe5cda9aa5de56ca81ed5009bf3d0806f6";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -745,6 +768,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iOS Development: Ivan Yamshchikov (986TMYZVXY)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = DYJ/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -761,6 +788,10 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iOS Distribution: Ivan Yamshchikov";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = DYJ/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
